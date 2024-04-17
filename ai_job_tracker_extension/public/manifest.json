@@ -5,7 +5,7 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["scripting"],
+  "permissions": ["scripting", "activeTab"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "icons": {
     "32": "vite.svg"
