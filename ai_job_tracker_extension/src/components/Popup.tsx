@@ -4,67 +4,77 @@ export default function Popup() {
   const handleClick = async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     chrome.scripting.executeScript({
-      target: { tabId: tab.id!, allFrames: true },
+      target: { tabId: tab.id! },
       func: () => {
-        type WindowDetails = {
-          [key: string]: HTMLElement | undefined;
-        };
+        const detail =
+          "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]";
+        const htmlContent = document.evaluate(
+          detail,
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null
+        ).singleNodeValue as HTMLElement;
 
-        // Initialize an empty object with the custom type
-        const windowDetails: WindowDetails = {};
-
-        interface Detail {
-          field: string;
-          Xpath: string;
+        if (htmlContent == null) {
+          console.log("Not On Job Page");
+          return;
         }
 
-        const Details: Detail[] = [
-          {
-            field: "Position",
-            Xpath:
-              "/html[1]/body[1]/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/h2[1]/a[1]/span[1]",
-          },
-          {
-            field: "Company",
-            Xpath:
-              "/html[1]/body[1]/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/a[1]",
-          },
-          {
-            field: "Location",
-            Xpath:
-              "/html[1]/body[1]/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/span[2]",
-          },
-          {
-            field: "JD",
-            Xpath:
-              "/html[1]/body[1]/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[4]/article[1]/div[1]/div[1]/span[1]",
-          },
-        ];
+        const jobTitleElement = htmlContent.querySelector(
+          "h1.job-details-jobs-unified-top-card__job-title"
+        );
+        const companyElement = htmlContent.querySelector(
+          "div.job-details-jobs-unified-top-card__primary-description-container >* a"
+        );
+        const locationElement = htmlContent.querySelector(
+          "div.job-details-jobs-unified-top-card__primary-description-container"
+        );
+        const jobLevelElement =
+          "//body[1]/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/span[1]";
 
-        Details.forEach((detail: Detail) => {
-          // Use document.evaluate to get the element using the XPath
-          const element = document.evaluate(
-            detail.Xpath,
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-          ).singleNodeValue as HTMLElement;
+        const parentSpan = document.evaluate(
+          jobLevelElement,
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null
+        ).singleNodeValue as HTMLElement;
+        // Extract text from elements
+        const jobTitle = jobTitleElement?.textContent?.trim() || "";
+        const companyName = companyElement?.textContent?.trim() || "";
+        const location = (locationElement?.textContent?.trim() || "").split(
+          "·"
+        )[1];
 
-          // If the element exists, assign it to the windowDetails object
-          if (element) {
-            windowDetails[detail.field] = element;
-          } else {
-            // Handle case where element is not found
-            console.error(`Element for field "${detail.field}" not found`);
+        if (parentSpan) {
+          // Extract text from the parent span
+          const textContent: string = parentSpan.textContent?.trim() || "";
+
+          // Define regular expression to capture all categories and their descriptions
+          const categoryRegex: RegExp =
+            /(?:\w+\s*)+(?:Matches your job preferences,.*?is\s*(\w+)\.)/g;
+
+          // Define an object to store the extracted categories and their descriptions
+          const categories: { [key: string]: string } = {};
+
+          // Iterate over matches to extract categories and descriptions
+          let match: RegExpExecArray | null;
+          while ((match = categoryRegex.exec(textContent)) !== null) {
+            // Extract category and description from the match
+            const category: string = match[1];
+            const description: string = match[0];
+
+            // Store the category and its description in the object
+            categories[category] = description;
           }
-        });
+          console.log(categories);
+          // Now you can use the extracted categories and descriptions as needed
+        }
 
-        // Access variables by their field names from windowDetails
-        console.log("Position:", windowDetails.Position?.innerText);
-        console.log("Company:", windowDetails.Company?.innerText);
-        console.log("Location:", windowDetails.Location?.innerText);
-        console.log("JD:", windowDetails.JD?.innerText);
+        console.log("Job Title:", jobTitle);
+        console.log("Company:", companyName);
+        console.log("Location:", location);
       },
     });
   };
