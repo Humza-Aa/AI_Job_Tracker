@@ -30,51 +30,21 @@ export default function Popup() {
         const locationElement = htmlContent.querySelector(
           "div.job-details-jobs-unified-top-card__primary-description-container"
         );
-        const jobLevelElement =
-          "//body[1]/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/span[1]";
+        const jobDescriptionElement = htmlContent.querySelector(
+          "article.jobs-description__container"
+        );
 
-        const parentSpan = document.evaluate(
-          jobLevelElement,
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null
-        ).singleNodeValue as HTMLElement;
-        // Extract text from elements
-        const jobTitle = jobTitleElement?.textContent?.trim() || "";
-        const companyName = companyElement?.textContent?.trim() || "";
-        const location = (locationElement?.textContent?.trim() || "").split(
+        const jobTitle = jobTitleElement?.textContent?.trim() || "Not Found";
+        const companyName = companyElement?.textContent?.trim() || "Not Found";
+        const location = (locationElement?.textContent?.trim() || "Not Found").split(
           "·"
         )[1];
-
-        if (parentSpan) {
-          // Extract text from the parent span
-          const textContent: string = parentSpan.textContent?.trim() || "";
-
-          // Define regular expression to capture all categories and their descriptions
-          const categoryRegex: RegExp =
-            /(?:\w+\s*)+(?:Matches your job preferences,.*?is\s*(\w+)\.)/g;
-
-          // Define an object to store the extracted categories and their descriptions
-          const categories: { [key: string]: string } = {};
-
-          // Iterate over matches to extract categories and descriptions
-          let match: RegExpExecArray | null;
-          while ((match = categoryRegex.exec(textContent)) !== null) {
-            // Extract category and description from the match
-            const category: string = match[1];
-            const description: string = match[0];
-
-            // Store the category and its description in the object
-            categories[category] = description;
-          }
-          console.log(categories);
-          // Now you can use the extracted categories and descriptions as needed
-        }
+        const jobDescription = jobDescriptionElement?.textContent?.trim() || "Not Found";
 
         console.log("Job Title:", jobTitle);
         console.log("Company:", companyName);
         console.log("Location:", location);
+        console.log("Job Description:", jobDescription);
       },
     });
   };
