@@ -1,4 +1,13 @@
-import { Box, Button, Flex, Heading, Select } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Flex,
+  Heading,
+  Select,
+} from "@chakra-ui/react";
 
 export default function Popup() {
   const handleClick = async () => {
@@ -61,6 +70,36 @@ export default function Popup() {
       >
         <Flex justifyContent="center" flexDir="column" gap="10px">
           <Heading textAlign="center">Track My Application</Heading>
+          <Flex w="100%">
+            <Box w="50%">
+              <Editable defaultValue="Take some chakra">
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+              <Editable defaultValue="Take some chakra">
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+              <Editable defaultValue="Take some chakra">
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+            </Box>
+            <Box w="50%">
+              <Editable defaultValue="Take some chakra">
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+              <Editable defaultValue="Take some chakra">
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+              <Editable defaultValue="Take some chakra">
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+            </Box>
+          </Flex>
           <Select placeholder="Select option">
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
