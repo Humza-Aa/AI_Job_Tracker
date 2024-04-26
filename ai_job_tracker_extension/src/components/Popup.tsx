@@ -19,8 +19,44 @@ import {
   GridItem,
   EditableTextarea,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 export default function Popup() {
+  const [information, setInformation] = useState([
+    {
+      name: "Position Title",
+      id: "position-title",
+      value: "",
+    },
+    {
+      name: "Company",
+      id: "company",
+      value: "",
+    },
+    {
+      name: "Location",
+      id: "location",
+      value: "",
+    },
+  ]);
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === "updateInformation") {
+        setInformation(message.data);
+      }
+    });
+  }, []); 
+
+  const handleEditableChange = (id: string, newValue: string) => {
+    const updatedInformation = information.map((field) => {
+      if (field.id === id) {
+        return { ...field, value: newValue };
+      }
+      return field;
+    });
+    setInformation(updatedInformation);
+  };
+
   const handleClick = async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     chrome.scripting.executeScript({
@@ -66,6 +102,27 @@ export default function Popup() {
         console.log("Company:", companyName);
         console.log("Location:", location);
         console.log("Job Description:", jobDescription);
+        const updatedInformation = [
+          {
+            name: "Position Title",
+            id: "position-title",
+            value: jobTitle,
+          },
+          {
+            name: "Company",
+            id: "company",
+            value: companyName,
+          },
+          {
+            name: "Location",
+            id: "location",
+            value: location,
+          },
+        ];
+        chrome.runtime.sendMessage({
+          type: "updateInformation",
+          data: updatedInformation,
+        });
       },
     });
   };
@@ -88,39 +145,26 @@ export default function Popup() {
             </TabList>
             <TabPanels>
               <TabPanel display="flex" flexDirection="column" gap="10px">
-                <FormControl id="position-title">
-                  <SimpleGrid columns={2} spacing={3}>
-                    <FormLabel m="0" display="flex" alignItems="center">
-                      Position Title:
-                    </FormLabel>
-                    <Editable defaultValue="Position Title">
-                      <EditablePreview w="100%" />
-                      <EditableInput />
-                    </Editable>
-                  </SimpleGrid>
-                </FormControl>
-                <FormControl id="company">
-                  <SimpleGrid columns={2} spacing={3}>
-                    <FormLabel m="0" display="flex" alignItems="center">
-                      Company:
-                    </FormLabel>
-                    <Editable defaultValue="Company">
-                      <EditablePreview w="100%" />
-                      <EditableInput />
-                    </Editable>
-                  </SimpleGrid>
-                </FormControl>
-                <FormControl id="location">
-                  <SimpleGrid columns={2} spacing={3}>
-                    <FormLabel m="0" display="flex" alignItems="center">
-                      Location:
-                    </FormLabel>
-                    <Editable defaultValue="Location">
-                      <EditablePreview w="100%" />
-                      <EditableInput />
-                    </Editable>
-                  </SimpleGrid>
-                </FormControl>
+                {information.map((element) => {
+                  return (
+                    <FormControl id={element.id}>
+                      <SimpleGrid columns={2} spacing={3}>
+                        <FormLabel m="0" display="flex" alignItems="center">
+                          {element.name}
+                        </FormLabel>
+                        <Editable
+                          value={element.value}
+                          onChange={(value) =>
+                            handleEditableChange(element.id, value)
+                          }
+                        >
+                          <EditablePreview w="100%" />
+                          <EditableInput />
+                        </Editable>
+                      </SimpleGrid>
+                    </FormControl>
+                  );
+                })}
                 <Box display="flex" gap="55px">
                   <Grid templateColumns="repeat(4, 1fr)" gap={4} w="100%">
                     <GridItem colSpan={1}>
