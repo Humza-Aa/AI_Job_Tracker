@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Select } from "@chakra-ui/react";
 
 export default function Popup() {
   const handleClick = async () => {
@@ -36,10 +36,11 @@ export default function Popup() {
 
         const jobTitle = jobTitleElement?.textContent?.trim() || "Not Found";
         const companyName = companyElement?.textContent?.trim() || "Not Found";
-        const location = (locationElement?.textContent?.trim() || "Not Found").split(
-          "·"
-        )[1];
-        const jobDescription = jobDescriptionElement?.textContent?.trim() || "Not Found";
+        const location = (
+          locationElement?.textContent?.trim() || "Not Found"
+        ).split("·")[1];
+        const jobDescription =
+          jobDescriptionElement?.textContent?.trim() || "Not Found";
 
         console.log("Job Title:", jobTitle);
         console.log("Company:", companyName);
@@ -51,7 +52,7 @@ export default function Popup() {
   return (
     <>
       <Box
-        bg="blackAlpha.700"
+        // bg="blackAlpha.700"
         h="100%"
         color="white"
         p="10px"
@@ -60,6 +61,16 @@ export default function Popup() {
       >
         <Flex justifyContent="center" flexDir="column" gap="10px">
           <Heading textAlign="center">Track My Application</Heading>
+          <Select placeholder="Select option">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
+          <Select placeholder="Select option">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
           <Button colorScheme="gray" onClick={handleClick}>
             Scan Job
           </Button>
