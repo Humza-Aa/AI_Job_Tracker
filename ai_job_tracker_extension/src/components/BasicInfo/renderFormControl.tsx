@@ -27,8 +27,9 @@ export default function renderFormControl(
   } else if (field.type === "textarea") {
     return (
       <Editable defaultValue={field.value}>
-        <EditablePreview w="100%" minH="50px" />
+        <EditablePreview w="100%" minH="50px" border="1px solid grey" p="5px" />
         <EditableTextarea
+          p="5px"
           onChange={(e) => handleEditableChange(field.id, e.target.value)}
         />
       </Editable>
@@ -39,8 +40,8 @@ export default function renderFormControl(
         value={field.value}
         onChange={(value) => handleEditableChange(field.id, value)}
       >
-        <EditablePreview w="100%" />
-        <EditableInput />
+        <EditablePreview w="100%" h="30px" border="1px solid grey" px="5px" />
+        <EditableInput p="5px" />
       </Editable>
     );
   } else {

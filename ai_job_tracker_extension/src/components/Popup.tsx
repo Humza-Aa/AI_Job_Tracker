@@ -10,73 +10,19 @@ import {
   TabPanel,
   FormControl,
   FormLabel,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  EditableTextarea,
+  Select,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-// import SingleInput from "./BasicInfo/SingleInput";
-import renderFormControl from "./BasicInfo/renderFormControl";
-// import JobDes from "./BasicInfo/textAreaAns";
+// import renderFormControl from "./BasicInfo/renderFormControl";
+import Data from "../Data/Data";
+// import handleClick from "../handleClick/handleClick";
 
 export default function Popup() {
-  const [information, setInformation] = useState([
-    {
-      name: "Position Title",
-      id: "position-title",
-      value: "",
-      type: "singleinput",
-      tab: "Basic Information",
-    },
-    {
-      name: "Company",
-      id: "company",
-      value: "",
-      type: "singleinput",
-      tab: "Basic Information",
-    },
-    {
-      name: "Location",
-      id: "location",
-      value: "",
-      type: "singleinput",
-      tab: "Basic Information",
-    },
-    {
-      name: "Experience Level",
-      id: "experience-level",
-      value: "",
-      type: "select",
-      options: ["Entry Level", "Mid Level", "Senior Level"],
-      tab: "Basic Information",
-    },
-    {
-      name: "Status",
-      id: "status",
-      value: "",
-      type: "select",
-      options: ["Applied", "Interviewing", "Rejected"],
-      tab: "Basic Information",
-    },
-    {
-      name: "Job Description",
-      id: "job-description",
-      value: "",
-      type: "textarea",
-      tab: "Job Details",
-    },
-    {
-      name: "Additional Information",
-      id: "additional-info",
-      value: "",
-      type: "textarea",
-      tab: "Job Details",
-    },
-    {
-      name: "Pre-Interview Tasks",
-      id: "pre-interview-tasks",
-      value: "",
-      type: "textarea",
-      tab: "Job Details",
-    },
-  ]);
+  const [information, setInformation] = useState(Data.info);
   useEffect(() => {
     chrome.runtime.onMessage.addListener((message) => {
       if (message.type === "updateInformation") {
@@ -84,7 +30,6 @@ export default function Popup() {
       }
     });
   }, []);
-
   const handleEditableChange = (id: string, newValue: string) => {
     const updatedInformation = information.map((field) => {
       if (field.id === id) {
@@ -94,14 +39,66 @@ export default function Popup() {
     });
     setInformation(updatedInformation);
   };
+  const renderFormControl = (field: any) => {
+    if (field.type === "select") {
+      return (
+        <Select
+          value={field.value}
+          onChange={(e) => handleEditableChange(field.id, e.target.value)}
+          placeholder={`Select ${field.name}`}
+        >
+          {field.options.map((option: any) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </Select>
+      );
+    } else if (field.type === "textarea") {
+      return (
+        <Editable defaultValue={field.value}>
+          <EditablePreview
+            w="100%"
+            minH="50px"
+            border="1px solid grey"
+            p="5px"
+          />
+          <EditableTextarea
+            p="5px"
+            onChange={(e) => handleEditableChange(field.id, e.target.value)}
+          />
+        </Editable>
+      );
+    } else if (field.type === "singleinput") {
+      return (
+        <Editable
+          value={field.value}
+          onChange={(value) => handleEditableChange(field.id, value)}
+        >
+          <EditablePreview w="100%" h="30px" border="1px solid grey" px="5px" />
+          <EditableInput p="5px" />
+        </Editable>
+      );
+    } else {
+      return (
+        <Editable
+          defaultValue={field.value}
+          onChange={(value) => handleEditableChange(field.id, value)}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
+      );
+    }
+  }
 
   const handleClick = async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     chrome.scripting.executeScript({
       target: { tabId: tab.id! },
-      func: () => {
-        const detail =
-          "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]";
+      func: (data) => {
+        const detail = data.queryHtml.htmlC;
+        console.log(detail)
         const htmlContent = document.evaluate(
           detail,
           document,
@@ -109,6 +106,7 @@ export default function Popup() {
           XPathResult.FIRST_ORDERED_NODE_TYPE,
           null
         ).singleNodeValue as HTMLElement;
+        console.log(htmlContent);
 
         if (htmlContent == null) {
           console.log("Not On Job Page");
@@ -116,18 +114,17 @@ export default function Popup() {
         }
 
         const jobTitleElement = htmlContent.querySelector(
-          "h1.job-details-jobs-unified-top-card__job-title"
+          data.queryHtml.jobTitleE
         );
         const companyElement = htmlContent.querySelector(
-          "div.job-details-jobs-unified-top-card__primary-description-container >* a"
+          data.queryHtml.companyE
         );
         const locationElement = htmlContent.querySelector(
-          "div.job-details-jobs-unified-top-card__primary-description-container"
+          data.queryHtml.locationE
         );
         const jobDescriptionElement = htmlContent.querySelector(
-          "article.jobs-description__container"
+          data.queryHtml.jobDescriptionE
         );
-
         const jobTitle = jobTitleElement?.textContent?.trim() || "Not Found";
         const companyName = companyElement?.textContent?.trim() || "Not Found";
         const location = (
@@ -135,7 +132,7 @@ export default function Popup() {
         ).split("·")[1];
         const jobDescription =
           jobDescriptionElement?.textContent?.trim() || "Not Found";
-
+        console.log(jobTitle, companyName, location, jobDescription);
         const updatedInformation = [
           {
             name: "Position Title",
@@ -196,11 +193,13 @@ export default function Popup() {
             tab: "Job Details",
           },
         ];
+        console.log(updatedInformation)
         chrome.runtime.sendMessage({
           type: "updateInformation",
           data: updatedInformation,
         });
       },
+      args: [Data]
     });
   };
   return (
@@ -221,15 +220,21 @@ export default function Popup() {
               <Tab>Job Details</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel display="flex" flexDirection="column" gap="10px">
+              <TabPanel display="flex" flexDirection="column" gap="2px">
                 {information
                   .filter((field) => field.tab === "Basic Information")
                   .map((field) => (
-                    <FormControl key={field.id} id={field.id}>
+                    <FormControl
+                      key={field.id}
+                      id={field.id}
+                      display="flex"
+                      flexDir="column"
+                      gap="2px"
+                    >
                       <FormLabel m="0" display="flex" alignItems="center">
                         {field.name}
                       </FormLabel>
-                      {renderFormControl(field, handleEditableChange)}
+                      {renderFormControl(field)}
                     </FormControl>
                   ))}
               </TabPanel>
@@ -242,7 +247,7 @@ export default function Popup() {
                       <FormLabel m="0" display="flex" alignItems="center">
                         {field.name}
                       </FormLabel>
-                      {renderFormControl(field, handleEditableChange)}
+                      {renderFormControl(field)}
                     </FormControl>
                   ))}
               </TabPanel>
