@@ -1,25 +1,20 @@
 import {
   Box,
   Button,
-  Editable,
-  EditableInput,
-  EditablePreview,
   Flex,
   Heading,
-  Select,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel,
-  SimpleGrid,
   FormControl,
   FormLabel,
-  Grid,
-  GridItem,
-  EditableTextarea,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+// import SingleInput from "./BasicInfo/SingleInput";
+import renderFormControl from "./BasicInfo/renderFormControl";
+// import JobDes from "./BasicInfo/textAreaAns";
 
 export default function Popup() {
   const [information, setInformation] = useState([
@@ -27,16 +22,59 @@ export default function Popup() {
       name: "Position Title",
       id: "position-title",
       value: "",
+      type: "singleinput",
+      tab: "Basic Information",
     },
     {
       name: "Company",
       id: "company",
       value: "",
+      type: "singleinput",
+      tab: "Basic Information",
     },
     {
       name: "Location",
       id: "location",
       value: "",
+      type: "singleinput",
+      tab: "Basic Information",
+    },
+    {
+      name: "Experience Level",
+      id: "experience-level",
+      value: "",
+      type: "select",
+      options: ["Entry Level", "Mid Level", "Senior Level"],
+      tab: "Basic Information",
+    },
+    {
+      name: "Status",
+      id: "status",
+      value: "",
+      type: "select",
+      options: ["Applied", "Interviewing", "Rejected"],
+      tab: "Basic Information",
+    },
+    {
+      name: "Job Description",
+      id: "job-description",
+      value: "",
+      type: "textarea",
+      tab: "Job Details",
+    },
+    {
+      name: "Additional Information",
+      id: "additional-info",
+      value: "",
+      type: "textarea",
+      tab: "Job Details",
+    },
+    {
+      name: "Pre-Interview Tasks",
+      id: "pre-interview-tasks",
+      value: "",
+      type: "textarea",
+      tab: "Job Details",
     },
   ]);
   useEffect(() => {
@@ -45,7 +83,7 @@ export default function Popup() {
         setInformation(message.data);
       }
     });
-  }, []); 
+  }, []);
 
   const handleEditableChange = (id: string, newValue: string) => {
     const updatedInformation = information.map((field) => {
@@ -98,25 +136,64 @@ export default function Popup() {
         const jobDescription =
           jobDescriptionElement?.textContent?.trim() || "Not Found";
 
-        console.log("Job Title:", jobTitle);
-        console.log("Company:", companyName);
-        console.log("Location:", location);
-        console.log("Job Description:", jobDescription);
         const updatedInformation = [
           {
             name: "Position Title",
             id: "position-title",
             value: jobTitle,
+            type: "singleinput",
+            tab: "Basic Information",
           },
           {
             name: "Company",
             id: "company",
             value: companyName,
+            type: "singleinput",
+            tab: "Basic Information",
           },
           {
             name: "Location",
             id: "location",
             value: location,
+            type: "singleinput",
+            tab: "Basic Information",
+          },
+          {
+            name: "Experience Level",
+            id: "experience-level",
+            value: "",
+            type: "select",
+            options: ["Entry Level", "Mid Level", "Senior Level"],
+            tab: "Basic Information",
+          },
+          {
+            name: "Status",
+            id: "status",
+            value: "",
+            type: "select",
+            options: ["Applied", "Interviewing", "Rejected"],
+            tab: "Basic Information",
+          },
+          {
+            name: "Job Description",
+            id: "job-description",
+            value: jobDescription,
+            type: "textarea",
+            tab: "Job Details",
+          },
+          {
+            name: "Additional Information",
+            id: "additional-info",
+            value: "",
+            type: "textarea",
+            tab: "Job Details",
+          },
+          {
+            name: "Pre-Interview Tasks",
+            id: "pre-interview-tasks",
+            value: "",
+            type: "textarea",
+            tab: "Job Details",
           },
         ];
         chrome.runtime.sendMessage({
@@ -145,105 +222,29 @@ export default function Popup() {
             </TabList>
             <TabPanels>
               <TabPanel display="flex" flexDirection="column" gap="10px">
-                {information.map((element) => {
-                  return (
-                    <FormControl id={element.id}>
-                      <SimpleGrid columns={2} spacing={3}>
-                        <FormLabel m="0" display="flex" alignItems="center">
-                          {element.name}
-                        </FormLabel>
-                        <Editable
-                          value={element.value}
-                          onChange={(value) =>
-                            handleEditableChange(element.id, value)
-                          }
-                        >
-                          <EditablePreview w="100%" />
-                          <EditableInput />
-                        </Editable>
-                      </SimpleGrid>
+                {information
+                  .filter((field) => field.tab === "Basic Information")
+                  .map((field) => (
+                    <FormControl key={field.id} id={field.id}>
+                      <FormLabel m="0" display="flex" alignItems="center">
+                        {field.name}
+                      </FormLabel>
+                      {renderFormControl(field, handleEditableChange)}
                     </FormControl>
-                  );
-                })}
-                <Box display="flex" gap="55px">
-                  <Grid templateColumns="repeat(4, 1fr)" gap={4} w="100%">
-                    <GridItem colSpan={1}>
-                      <FormLabel
-                        m="0"
-                        display="flex"
-                        alignItems="center"
-                        w="100%"
-                        h="100%"
-                      >
-                        Status:
-                      </FormLabel>
-                    </GridItem>
-                    <GridItem colSpan={3}>
-                      <Select placeholder="Select option">
-                        <option value="option1">Applied</option>
-                        <option value="option2">Interviewing</option>
-                        <option value="option3">Rejected</option>
-                      </Select>
-                    </GridItem>
-                  </Grid>
-                </Box>
-                <Box display="flex" gap="10px">
-                  <Grid templateColumns="repeat(4, 1fr)" gap={4} w="100%">
-                    <GridItem colSpan={1}>
-                      <FormLabel
-                        m="0"
-                        display="flex"
-                        alignItems="center"
-                        w="100%"
-                        h="100%"
-                      >
-                        Experience Level:
-                      </FormLabel>
-                    </GridItem>
-                    <GridItem colSpan={3}>
-                      <Select placeholder="Select option">
-                        <option value="option1">Entry Level</option>
-                        <option value="option2">Mid Level</option>
-                        <option value="option3">Senior Level</option>
-                      </Select>
-                    </GridItem>
-                  </Grid>
-                </Box>
+                  ))}
               </TabPanel>
-              <TabPanel>
-                <FormControl id="preInterviewTasks">
-                  <Flex flexDir="column" gap="4px">
-                    <FormLabel m="0" display="flex" alignItems="center">
-                      Pre-Interview Tasks:
-                    </FormLabel>
-                    <Editable pl="10px" defaultValue="Type in Information">
-                      <EditablePreview w="100%" minH="50px" />
-                      <EditableTextarea />
-                    </Editable>
-                  </Flex>
-                </FormControl>
-                <FormControl id="additionalInformation">
-                  <Flex flexDir="column" gap="4px">
-                    <FormLabel m="0" display="flex" alignItems="center">
-                      Additional Information:
-                    </FormLabel>
-                    <Editable pl="10px" defaultValue="Type in Information">
-                      <EditablePreview w="100%" minH="50px" />
-                      <EditableTextarea />
-                    </Editable>
-                  </Flex>
-                </FormControl>
-                <FormControl id="jobDescription">
-                  <Flex flexDir="column" gap="4px">
-                    <FormLabel m="0" display="flex" alignItems="center">
-                      Job Description:
-                    </FormLabel>
-                    <Editable pl="10px" defaultValue="Type in Information">
-                      <EditablePreview w="100%" minH="50px" />
-                      <EditableTextarea />
-                    </Editable>
-                  </Flex>
-                </FormControl>
+
+              <TabPanel display="flex" flexDirection="column" gap="10px">
+                {information
+                  .filter((field) => field.tab === "Job Details")
+                  .map((field) => (
+                    <FormControl key={field.id} id={field.id}>
+                      <FormLabel m="0" display="flex" alignItems="center">
+                        {field.name}
+                      </FormLabel>
+                      {renderFormControl(field, handleEditableChange)}
+                    </FormControl>
+                  ))}
               </TabPanel>
             </TabPanels>
           </Tabs>
