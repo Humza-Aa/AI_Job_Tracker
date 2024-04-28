@@ -15,7 +15,7 @@ export default function renderFormControl(
       <Select
         value={field.value}
         onChange={(e) => handleEditableChange(field.id, e.target.value)}
-        placeholder={`Select ${field.name}`}
+        defaultValue={field.options[field.default]}
       >
         {field.options.map((option: any) => (
           <option key={option} value={option}>
@@ -26,10 +26,22 @@ export default function renderFormControl(
     );
   } else if (field.type === "textarea") {
     return (
-      <Editable defaultValue={field.value}>
-        <EditablePreview w="100%" minH="50px" border="1px solid grey" p="5px" />
+      <Editable value={field.value}>
+        <EditablePreview
+          w="100%"
+          minH="50px"
+          h="80px"
+          overflowY="scroll"
+          resize="vertical"
+          border="1px solid grey"
+          p="5px"
+        />
         <EditableTextarea
           p="5px"
+          resize="vertical"
+          maxH="200px" // Adjust the maximum height as needed
+          minH="80px" // Set the minimum height to prevent the textarea from becoming too small
+          h="auto"
           onChange={(e) => handleEditableChange(field.id, e.target.value)}
         />
       </Editable>

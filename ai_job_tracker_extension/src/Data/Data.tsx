@@ -34,8 +34,9 @@ const Data = {
       id: "status",
       value: "",
       type: "select",
-      options: ["Applied", "Interviewing", "Rejected"],
+      options: ["Applied", "Saved", "Screening", "Interviewing", "Rejected"],
       tab: "Basic Information",
+      default: 0
     },
     {
       name: "Job Description",
