@@ -5,7 +5,7 @@ const { google } = require("googleapis");
 app.use(express.json());
 require("dotenv").config();
 
-app.get("/", async (req, res) => {
+app.post("/", async (req, res) => {
   const auth = new google.auth.GoogleAuth({
     keyFile: "credentials.json",
     scopes: "https://www.googleapis.com/auth/spreadsheets",
@@ -34,10 +34,12 @@ app.get("/", async (req, res) => {
     location,
     experienceLevel,
     status,
-    preInterviewTasks,
+    pre_InterviewTasks,
     jobDescription,
     additionalInformation,
   } = req.body;
+
+  console.log(req)
 
   const validExperienceLevels = ["Entry Level", "Mid Level", "Senior Level"];
   const validStatusOptions = [
@@ -67,7 +69,7 @@ app.get("/", async (req, res) => {
       appliedDate,
       deleteDeadline,
       status,
-      preInterviewTasks,
+      pre_InterviewTasks,
       jobDescription,
       additionalInformation,
     ],
@@ -76,7 +78,7 @@ app.get("/", async (req, res) => {
   try {
     await sheet.spreadsheets.values.append({
       spreadsheetId,
-      range: "Apr2024!A:I",
+      range: "Apr2024!A:J",
       valueInputOption: "USER_ENTERED",
       resource: {
         values,

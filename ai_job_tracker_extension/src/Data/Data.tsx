@@ -2,6 +2,7 @@ const Data = {
   info: [
     {
       name: "Position Title",
+      apiName: "Position Title",
       id: "position-title",
       value: "",
       type: "singleinput",
@@ -9,6 +10,7 @@ const Data = {
     },
     {
       name: "Company",
+      apiName: "Company",
       id: "company",
       value: "",
       type: "singleinput",
@@ -16,6 +18,7 @@ const Data = {
     },
     {
       name: "Location",
+      apiName: "Location",
       id: "location",
       value: "",
       type: "singleinput",
@@ -23,16 +26,19 @@ const Data = {
     },
     {
       name: "Experience Level",
+      apiName: "Experience Level",
       id: "experience-level",
-      value: "",
+      value: "Entry Level",
       type: "select",
       options: ["Entry Level", "Mid Level", "Senior Level"],
       tab: "Basic Information",
+      default: 0,
     },
     {
       name: "Status",
+      apiName: "Status",
       id: "status",
-      value: "",
+      value: "Applied",
       type: "select",
       options: [
         "Saved",
@@ -47,6 +53,7 @@ const Data = {
     },
     {
       name: "Job Description",
+      apiName: "Job Description",
       id: "job-description",
       value: "",
       type: "textarea",
@@ -54,6 +61,7 @@ const Data = {
     },
     {
       name: "Additional Information",
+      apiName: "Additional Information",
       id: "additional-info",
       value: "",
       type: "textarea",
@@ -61,6 +69,7 @@ const Data = {
     },
     {
       name: "Pre-Interview Tasks",
+      apiName: "Pre_Interview Tasks",
       id: "pre-interview-tasks",
       value: "",
       type: "textarea",

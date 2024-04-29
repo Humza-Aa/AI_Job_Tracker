@@ -39,6 +39,7 @@ export default async function handleClick() {
       const updatedInformation = [
         {
           name: "Position Title",
+          apiName: "Position Title",
           id: "position-title",
           value: jobTitle,
           type: "singleinput",
@@ -46,6 +47,7 @@ export default async function handleClick() {
         },
         {
           name: "Company",
+          apiName: "Company",
           id: "company",
           value: companyName,
           type: "singleinput",
@@ -53,6 +55,7 @@ export default async function handleClick() {
         },
         {
           name: "Location",
+          apiName: "Location",
           id: "location",
           value: location,
           type: "singleinput",
@@ -60,22 +63,33 @@ export default async function handleClick() {
         },
         {
           name: "Experience Level",
+          apiName: "Experience Level",
           id: "experience-level",
-          value: "",
+          value: "Entry Level",
           type: "select",
           options: ["Entry Level", "Mid Level", "Senior Level"],
           tab: "Basic Information",
+          default: 0,
         },
         {
           name: "Status",
+          apiName: "Status",
           id: "status",
-          value: "",
+          value: "Applied",
           type: "select",
-          options: ["Applied", "Saved", "Screening", "Interviewing", "Rejected"],
+          options: [
+            "Applied",
+            "Saved",
+            "Screening",
+            "Interviewing",
+            "Rejected",
+          ],
           tab: "Basic Information",
+          default: 0,
         },
         {
           name: "Job Description",
+          apiName: "Job Description",
           id: "job-description",
           value: jobDescription,
           type: "textarea",
@@ -83,14 +97,16 @@ export default async function handleClick() {
         },
         {
           name: "Additional Information",
+          apiName: "Additional Information",
           id: "additional-info",
           value: "",
           type: "textarea",
           tab: "Job Details",
         },
         {
-          name: "Pre-Interview Tasks",
+          name: "Pre_Interview Tasks",
           id: "pre-interview-tasks",
+          apiName: "Pre_Interview Tasks",
           value: "",
           type: "textarea",
           tab: "Job Details",
