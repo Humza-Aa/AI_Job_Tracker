@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 const { google } = require("googleapis");
 app.use(express.json());
-require('dotenv').config();
+require("dotenv").config();
 
 app.get("/", async (req, res) => {
   const auth = new google.auth.GoogleAuth({
@@ -40,7 +40,14 @@ app.get("/", async (req, res) => {
   } = req.body;
 
   const validExperienceLevels = ["Entry Level", "Mid Level", "Senior Level"];
-  const validStatusOptions = ["Applied", "Rejected", "Interviewing"];
+  const validStatusOptions = [
+    "Saved",
+    "Applied",
+    "Screening",
+    "Interviewing",
+    "Offer",
+    "Rejected",
+  ];
 
   if (
     !validExperienceLevels.includes(experienceLevel) ||

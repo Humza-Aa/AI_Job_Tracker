@@ -34,9 +34,16 @@ const Data = {
       id: "status",
       value: "",
       type: "select",
-      options: ["Applied", "Saved", "Screening", "Interviewing", "Rejected"],
+      options: [
+        "Saved",
+        "Applied",
+        "Screening",
+        "Interviewing",
+        "Offer",
+        "Rejected",
+      ],
       tab: "Basic Information",
-      default: 0
+      default: 0,
     },
     {
       name: "Job Description",
@@ -61,7 +68,8 @@ const Data = {
     },
   ],
   queryHtml: {
-    htmlC: "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]",
+    htmlC:
+      "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]",
     jobTitleE: "h1.job-details-jobs-unified-top-card__job-title",
     companyE:
       "div.job-details-jobs-unified-top-card__primary-description-container >* a",
