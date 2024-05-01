@@ -44,6 +44,7 @@ export default async function handleClick() {
           value: jobTitle,
           type: "singleinput",
           tab: "Basic Information",
+          Require: true,
         },
         {
           name: "Company",
@@ -52,6 +53,7 @@ export default async function handleClick() {
           value: companyName,
           type: "singleinput",
           tab: "Basic Information",
+          Require: true,
         },
         {
           name: "Location",
@@ -60,6 +62,7 @@ export default async function handleClick() {
           value: location,
           type: "singleinput",
           tab: "Basic Information",
+          Require: true,
         },
         {
           name: "Experience Level",
@@ -69,6 +72,7 @@ export default async function handleClick() {
           type: "select",
           options: ["Entry Level", "Mid Level", "Senior Level"],
           tab: "Basic Information",
+          Require: true,
           default: 0,
         },
         {
@@ -85,6 +89,7 @@ export default async function handleClick() {
             "Rejected",
           ],
           tab: "Basic Information",
+          Require: true,
           default: 0,
         },
         {
@@ -94,6 +99,7 @@ export default async function handleClick() {
           value: jobDescription,
           type: "textarea",
           tab: "Job Details",
+          Require: false,
         },
         {
           name: "Additional Information",
@@ -102,6 +108,7 @@ export default async function handleClick() {
           value: "",
           type: "textarea",
           tab: "Job Details",
+          Require: false,
         },
         {
           name: "Pre_Interview Tasks",
@@ -110,6 +117,7 @@ export default async function handleClick() {
           value: "",
           type: "textarea",
           tab: "Job Details",
+          Require: false,
         },
       ];
       chrome.runtime.sendMessage({

@@ -10,11 +10,6 @@ import {
   TabPanel,
   FormControl,
   FormLabel,
-  // Editable,
-  // EditableInput,
-  // EditablePreview,
-  // EditableTextarea,
-  // Select,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import renderFormControl from "./BasicInfo/renderFormControl";
@@ -23,15 +18,16 @@ import handleClick from "../handleClick/handleClick";
 import ApiSaveJob from "../API/api";
 
 export default function Popup() {
-
   const [information, setInformation] = useState(Data.info);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     chrome.runtime.onMessage.addListener((message) => {
       if (message.type === "updateInformation") {
         setInformation(message.data);
       }
     });
-  }, []);
+  }, [loading]);
   function handleEditableChange(id: string, newValue: string) {
     const updatedInformation = information.map((field) => {
       if (field.id === id) {
@@ -70,6 +66,7 @@ export default function Popup() {
                       display="flex"
                       flexDir="column"
                       gap="2px"
+                      isRequired={field.Require}
                     >
                       <FormLabel m="0" display="flex" alignItems="center">
                         {field.name}
@@ -83,7 +80,11 @@ export default function Popup() {
                 {information
                   .filter((field) => field.tab === "Job Details")
                   .map((field) => (
-                    <FormControl key={field.id} id={field.id}>
+                    <FormControl
+                      key={field.id}
+                      id={field.id}
+                      isRequired={field.Require}
+                    >
                       <FormLabel m="0" display="flex" alignItems="center">
                         {field.name}
                       </FormLabel>
@@ -98,8 +99,9 @@ export default function Popup() {
             Scan Job
           </Button>
           <Button
+            isLoading={loading}
             onClick={() => {
-              ApiSaveJob(information);
+              ApiSaveJob(information, setInformation, setLoading);
             }}
           >
             Track Job

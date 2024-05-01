@@ -7,6 +7,7 @@ const Data = {
       value: "",
       type: "singleinput",
       tab: "Basic Information",
+      Require: true,
     },
     {
       name: "Company",
@@ -15,6 +16,7 @@ const Data = {
       value: "",
       type: "singleinput",
       tab: "Basic Information",
+      Require: true,
     },
     {
       name: "Location",
@@ -23,6 +25,7 @@ const Data = {
       value: "",
       type: "singleinput",
       tab: "Basic Information",
+      Require: true,
     },
     {
       name: "Experience Level",
@@ -32,6 +35,7 @@ const Data = {
       type: "select",
       options: ["Entry Level", "Mid Level", "Senior Level"],
       tab: "Basic Information",
+      Require: true,
       default: 0,
     },
     {
@@ -49,6 +53,7 @@ const Data = {
         "Rejected",
       ],
       tab: "Basic Information",
+      Require: true,
       default: 0,
     },
     {
@@ -58,6 +63,7 @@ const Data = {
       value: "",
       type: "textarea",
       tab: "Job Details",
+      Require: true,
     },
     {
       name: "Additional Information",
@@ -66,6 +72,7 @@ const Data = {
       value: "",
       type: "textarea",
       tab: "Job Details",
+      Require: false,
     },
     {
       name: "Pre-Interview Tasks",
@@ -74,12 +81,14 @@ const Data = {
       value: "",
       type: "textarea",
       tab: "Job Details",
+      Require: false,
     },
   ],
   queryHtml: {
     htmlC:
       "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]",
-    jobTitleE: "h1.job-details-jobs-unified-top-card__job-title",
+    jobTitleE:
+      "h1.job-details-jobs-unified-top-card__job-title, div.job-details-jobs-unified-top-card__job-title",
     companyE:
       "div.job-details-jobs-unified-top-card__primary-description-container >* a",
     locationE:

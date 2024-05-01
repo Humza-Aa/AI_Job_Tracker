@@ -1,3 +1,5 @@
+import Data from "../Data/Data";
+
 interface InfoItem {
   name: string;
   apiName: string;
@@ -9,7 +11,12 @@ interface InfoItem {
   default?: number;
 }
 
-export default async function ApiSaveJob(info: InfoItem[]) {
+export default async function ApiSaveJob(
+  info: InfoItem[],
+  setInformation: Function,
+  setLoading: Function
+) {
+  setLoading(true);
   interface TransformedObject {
     positionTitle: string;
     company: string;
@@ -29,8 +36,6 @@ export default async function ApiSaveJob(info: InfoItem[]) {
     return acc;
   }, {} as TransformedObject);
 
-  console.log(transformedObject);
-
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -46,10 +51,15 @@ export default async function ApiSaveJob(info: InfoItem[]) {
     })
     .then((data) => {
       // Handle the data received from the API
+
       console.log(data);
     })
     .catch((error) => {
       // Handle errors
       console.error("There was a problem with the fetch operation:", error);
     });
+  setInformation(Data.info);
+  setTimeout(function () {
+    setLoading(false);
+  }, 1500); // 2000 milliseconds = 2 seconds
 }
