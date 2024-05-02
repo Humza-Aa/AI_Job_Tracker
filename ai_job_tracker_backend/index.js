@@ -4,6 +4,8 @@ const port = 3000;
 const { google } = require("googleapis");
 app.use(express.json());
 require("dotenv").config();
+const checkIfSheetExists = require("./Functions/checkIfSheetExists");
+const createSheet = require("./Functions/createSheet");
 
 app.post("/", async (req, res) => {
   const auth = new google.auth.GoogleAuth({
@@ -22,6 +24,9 @@ app.post("/", async (req, res) => {
 
   const today = new Date();
   const appliedDate = today.toISOString().split("T")[0];
+  const month = today.toLocaleString("default", { month: "short" });
+  const year = today.getFullYear();
+  const sheetName = `${month}${year}`;
 
   // Calculate deleteDeadline as today's date plus 1 month
   const deleteDeadlineDate = new Date(today);
@@ -38,8 +43,6 @@ app.post("/", async (req, res) => {
     jobDescription,
     additionalInformation,
   } = req.body;
-
-  console.log(req)
 
   const validExperienceLevels = ["Entry Level", "Mid Level", "Senior Level"];
   const validStatusOptions = [
@@ -76,9 +79,43 @@ app.post("/", async (req, res) => {
   ];
 
   try {
+    const sheetExists = await checkIfSheetExists(
+      sheetName,
+      sheet,
+      spreadsheetId
+    );
+    console.log(sheetExists)
+    if (!sheetExists) {
+      // If the sheet tab doesn't exist, create it
+      await createSheet(sheetName, sheet, spreadsheetId);
+      // Add headings to the first row
+      const headings = [
+        [
+          "Position Title",
+          "Company",
+          "Location",
+          "Experience Level",
+          "Applied Date",
+          "Delete Deadline",
+          "Status",
+          "Pre-Interview Tasks",
+          "Job Description",
+          "Additional Information",
+        ],
+      ];
+      await sheet.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${sheetName}!A1:J1`,
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: headings,
+        },
+      });
+    }
+
     await sheet.spreadsheets.values.append({
       spreadsheetId,
-      range: "Apr2024!A:J",
+      range: `${sheetName}!A:J`,
       valueInputOption: "USER_ENTERED",
       resource: {
         values,
@@ -87,7 +124,7 @@ app.post("/", async (req, res) => {
 
     res.sendStatus(200);
   } catch (error) {
-    console.error("Error appending to Google Sheet:", error);
+    // console.error("Error appending to Google Sheet:", error);
     res.sendStatus(500);
   }
 });
