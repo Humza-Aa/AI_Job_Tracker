@@ -1,14 +1,36 @@
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+  Heading,
+  Select,
+} from "@chakra-ui/react";
 export default function JobsTable() {
   return (
     <>
       <TableContainer>
+        <Heading textAlign="center" fontSize="xl" p="10px">
+          Applied Jobs
+        </Heading>
         <Table variant="simple">
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
           <Thead>
             <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
+              <Th>Position Title</Th>
+              <Th>Company</Th>
+              <Th>Location</Th>
+              <Th>Experence level</Th>
+              <Th>Applied Date</Th>
+              <Th>Delete Date</Th>
+              <Th>Status</Th>
+              <Th>Pre-Interview Tasks</Th>
+              <Th>Job Description</Th>
+              <Th>Additional Information</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -16,25 +38,19 @@ export default function JobsTable() {
               <Td>inches</Td>
               <Td>millimetres (mm)</Td>
               <Td isNumeric>25.4</Td>
-            </Tr>
-            <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
+              <Td>
+                <Select variant="filled" placeholder="medium size" size="md" />
+              </Td>
+              <Td isNumeric>25.4</Td>
+              <Td isNumeric>25.4</Td>
+              <Td>
+                <Select variant="filled" placeholder="medium size" size="md" />
+              </Td>
+              <Td isNumeric>25.4</Td>
+              <Td isNumeric>25.4</Td>
+              <Td isNumeric>25.4</Td>
             </Tr>
           </Tbody>
-          <Tfoot>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
-            </Tr>
-          </Tfoot>
         </Table>
       </TableContainer>
     </>
