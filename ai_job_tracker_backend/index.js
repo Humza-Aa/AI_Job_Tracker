@@ -9,7 +9,7 @@ const createSheet = require("./Functions/createSheet");
 
 app.post("/", async (req, res) => {
   const auth = new google.auth.GoogleAuth({
-    keyFile: "credentials.json",
+    keyFile: "Creds/credentials.json",
     scopes: "https://www.googleapis.com/auth/spreadsheets",
   });
 
