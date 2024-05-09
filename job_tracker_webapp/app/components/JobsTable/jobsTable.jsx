@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   Thead,
@@ -11,7 +12,32 @@ import {
   Heading,
   Select,
 } from "@chakra-ui/react";
-export default function JobsTable() {
+
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+export async function getServerSideProps({ req }) {
+  try {
+    const response = await axios.get("http://localhost:5000/appliedJobs");
+    const initialJobs = await response;
+    return {
+      props: {
+        initialJobs,
+      },
+    };
+  } catch (error) {
+    console.log(`No Response ${error}`)
+    return 401;
+  }
+}
+
+export default function JobsTable({ initialJobs }) {
+  const [jobs, setJobs] = useState([])
+  useEffect(() => {
+    setJobs(initialJobs)
+  }, [initialJobs])
+  
+  console.log(jobs)
   return (
     <>
       <TableContainer>
@@ -35,7 +61,7 @@ export default function JobsTable() {
           </Thead>
           <Tbody>
             <Tr>
-              <Td>inches</Td>
+              <Td>{}</Td>
               <Td>millimetres (mm)</Td>
               <Td isNumeric>25.4</Td>
               <Td>
