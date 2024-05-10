@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import {
   Table,
   Thead,
@@ -14,30 +14,22 @@ import {
 } from "@chakra-ui/react";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
 
-export async function getServerSideProps({ req }) {
+async function getJobs() {
   try {
-    const response = await axios.get("http://localhost:5000/appliedJobs");
-    const initialJobs = await response;
-    return {
-      props: {
-        initialJobs,
-      },
-    };
+    const initialJobs = await axios.get("http://localhost:5000/appliedJobs");
+    return initialJobs;
   } catch (error) {
-    console.log(`No Response ${error}`)
-    return 401;
+    console.log(`No Response ${error}`);
+    throw error;
   }
 }
 
-export default function JobsTable({ initialJobs }) {
-  const [jobs, setJobs] = useState([])
-  useEffect(() => {
-    setJobs(initialJobs)
-  }, [initialJobs])
-  
-  console.log(jobs)
+export default async function JobsTable() {
+  const jobs = await getJobs().then((jobs) => {
+    return jobs.data;
+  });
+
   return (
     <>
       <TableContainer>
@@ -60,22 +52,46 @@ export default function JobsTable({ initialJobs }) {
             </Tr>
           </Thead>
           <Tbody>
-            <Tr>
-              <Td>{}</Td>
-              <Td>millimetres (mm)</Td>
-              <Td isNumeric>25.4</Td>
-              <Td>
-                <Select variant="filled" placeholder="medium size" size="md" />
-              </Td>
-              <Td isNumeric>25.4</Td>
-              <Td isNumeric>25.4</Td>
-              <Td>
-                <Select variant="filled" placeholder="medium size" size="md" />
-              </Td>
-              <Td isNumeric>25.4</Td>
-              <Td isNumeric>25.4</Td>
-              <Td isNumeric>25.4</Td>
-            </Tr>
+            {jobs.map((job, key) => {
+              return (
+                <Tr key={key}>
+                  <Td>{job.positionTitle}</Td>
+                  <Td>{job.company}</Td>
+                  <Td>{job.location}</Td>
+                  <Td>
+                    <Select
+                      variant="filled"
+                      // placeholder="medium size"
+                      value={job.experienceLevel}
+                      size="md"
+                    >
+                      <option value="Entry Level">Entry Level</option>
+                      <option value="Mid Level">Mid Level</option>
+                      <option value="Senior Level">Senior Level</option>
+                    </Select>
+                  </Td>
+                  <Td isNumeric>{job.appliedDate}</Td>
+                  <Td isNumeric>{job.deleteDeadline}</Td>
+                  <Td>
+                    <Select
+                      variant="filled"
+                      value={job.status}
+                      size="md"
+                      width="100px"
+                    >
+                      <option value="Applied">Applied</option>
+                      <option value="Screening">Screening</option>
+                      <option value="Interviewing">Interviewing</option>
+                      <option value="Offer">Offer</option>
+                      <option value="Rejected">Rejected</option>
+                    </Select>
+                  </Td>
+                  <Td>{job.pre_InterviewTasks}</Td>
+                  <Td>{job.jobDescription}</Td>
+                  <Td>{job.additionalInformation}</Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
       </TableContainer>

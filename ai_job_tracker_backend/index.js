@@ -64,7 +64,7 @@ app.post("/", async (req, res) => {
 });
 
 app.get("/appliedJobs", async (req, res) => {
-  console.log(req)
+  // console.log(req)
   try {
     const jobs = await Application.find();
     res.json(jobs);
