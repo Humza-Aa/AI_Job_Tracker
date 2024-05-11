@@ -3,11 +3,13 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
+  Editable,
+  EditableInput,
+  EditableTextarea,
+  EditablePreview,
   TableContainer,
   Heading,
   Select,
@@ -32,7 +34,7 @@ export default async function JobsTable() {
 
   return (
     <>
-      <TableContainer>
+      <TableContainer fontSize="10px">
         <Heading textAlign="center" fontSize="xl" p="10px">
           Applied Jobs
         </Heading>
@@ -53,30 +55,54 @@ export default async function JobsTable() {
           </Thead>
           <Tbody>
             {jobs.map((job, key) => {
+              const appliedDate = new Date(job.appliedDate);
+              const deleteDate = new Date(job.deleteDeadline);
+
+              const formattedAppliedDate = appliedDate.toISOString().split("T")[0];
+              const formattedAppliedTime = appliedDate.toTimeString().slice(0, 8);
+              
+              const formattedDeleteDate = deleteDate.toISOString().split("T")[0];
+              const formattedDeleteTime = deleteDate.toTimeString().slice(0, 8);
+              
               return (
                 <Tr key={key}>
-                  <Td>{job.positionTitle}</Td>
-                  <Td>{job.company}</Td>
-                  <Td>{job.location}</Td>
+                  <Td>
+                    <Editable w="100%" defaultValue={job.positionTitle}>
+                      <EditablePreview />
+                      <EditableInput w="100%" />
+                    </Editable>
+                  </Td>
+                  <Td>
+                    <Editable w="100%" defaultValue={job.company}>
+                      <EditablePreview w="100%" />
+                      <EditableInput w="100%" />
+                    </Editable>
+                  </Td>
+                  <Td>
+                    <Editable defaultValue={job.location}>
+                      <EditablePreview />
+                      <EditableInput />
+                    </Editable>
+                  </Td>
                   <Td>
                     <Select
                       variant="filled"
                       // placeholder="medium size"
                       value={job.experienceLevel}
-                      size="md"
+                      size="xs"
                     >
                       <option value="Entry Level">Entry Level</option>
                       <option value="Mid Level">Mid Level</option>
                       <option value="Senior Level">Senior Level</option>
                     </Select>
                   </Td>
-                  <Td isNumeric>{job.appliedDate}</Td>
-                  <Td isNumeric>{job.deleteDeadline}</Td>
+                  <Td isNumeric>Date: {formattedAppliedDate} <br /> Time: {formattedAppliedTime}</Td>
+                  <Td isNumeric>Date: {formattedDeleteDate} <br /> Time: {formattedDeleteTime}</Td>
                   <Td>
                     <Select
                       variant="filled"
                       value={job.status}
-                      size="md"
+                      size="xs"
                       width="100px"
                     >
                       <option value="Applied">Applied</option>
@@ -86,9 +112,74 @@ export default async function JobsTable() {
                       <option value="Rejected">Rejected</option>
                     </Select>
                   </Td>
-                  <Td>{job.pre_InterviewTasks}</Td>
-                  <Td>{job.jobDescription}</Td>
-                  <Td>{job.additionalInformation}</Td>
+                  <Td>
+                    <Editable
+                      maxW="200px"
+                      defaultValue={job.pre_InterviewTasks}
+                    >
+                      <EditablePreview
+                        w="100%"
+                        minH="50px"
+                        h="80px"
+                        overflowY="scroll"
+                        resize="vertical"
+                        border="1px solid grey"
+                        p="5px"
+                      />
+                      <EditableTextarea
+                        p="5px"
+                        resize="vertical"
+                        maxH="200px"
+                        minH="80px"
+                        h="auto"
+                        whiteSpace="pre-wrap"
+                      />
+                    </Editable>
+                  </Td>
+                  <Td>
+                    <Editable value={job.jobDescription}>
+                      <EditablePreview
+                        w="100%"
+                        minH="50px"
+                        h="80px"
+                        overflowY="scroll"
+                        resize="vertical"
+                        border="1px solid grey"
+                        p="5px"
+                        whiteSpace="pre-wrap"
+                      />
+                      <EditableTextarea
+                        p="5px"
+                        resize="vertical"
+                        maxH="200px"
+                        minH="80px"
+                        h="auto"
+                        whiteSpace="pre-wrap"
+                      />
+                    </Editable>
+                  </Td>
+                  <Td>
+                    <Editable value={job.additionalInformation}>
+                      <EditablePreview
+                        w="100%"
+                        minH="50px"
+                        h="80px"
+                        overflowY="scroll"
+                        resize="vertical"
+                        border="1px solid grey"
+                        p="5px"
+                        whiteSpace="pre-wrap"
+                      />
+                      <EditableTextarea
+                        p="5px"
+                        resize="vertical"
+                        maxH="200px"
+                        minH="80px"
+                        h="auto"
+                        whiteSpace="pre-wrap"
+                      />
+                    </Editable>
+                  </Td>
                 </Tr>
               );
             })}
