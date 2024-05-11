@@ -58,17 +58,23 @@ export default async function JobsTable() {
               const appliedDate = new Date(job.appliedDate);
               const deleteDate = new Date(job.deleteDeadline);
 
-              const formattedAppliedDate = appliedDate.toISOString().split("T")[0];
-              const formattedAppliedTime = appliedDate.toTimeString().slice(0, 8);
-              
-              const formattedDeleteDate = deleteDate.toISOString().split("T")[0];
+              const formattedAppliedDate = appliedDate
+                .toISOString()
+                .split("T")[0];
+              const formattedAppliedTime = appliedDate
+                .toTimeString()
+                .slice(0, 8);
+
+              const formattedDeleteDate = deleteDate
+                .toISOString()
+                .split("T")[0];
               const formattedDeleteTime = deleteDate.toTimeString().slice(0, 8);
-              
+
               return (
                 <Tr key={key}>
                   <Td>
                     <Editable w="100%" defaultValue={job.positionTitle}>
-                      <EditablePreview />
+                      <EditablePreview w="100%"/>
                       <EditableInput w="100%" />
                     </Editable>
                   </Td>
@@ -80,8 +86,8 @@ export default async function JobsTable() {
                   </Td>
                   <Td>
                     <Editable defaultValue={job.location}>
-                      <EditablePreview />
-                      <EditableInput />
+                      <EditablePreview w="100%"/>
+                      <EditableInput w="100%"/>
                     </Editable>
                   </Td>
                   <Td>
@@ -96,8 +102,14 @@ export default async function JobsTable() {
                       <option value="Senior Level">Senior Level</option>
                     </Select>
                   </Td>
-                  <Td isNumeric>Date: {formattedAppliedDate} <br /> Time: {formattedAppliedTime}</Td>
-                  <Td isNumeric>Date: {formattedDeleteDate} <br /> Time: {formattedDeleteTime}</Td>
+                  <Td isNumeric>
+                    Date: {formattedAppliedDate} <br /> Time:{" "}
+                    {formattedAppliedTime}
+                  </Td>
+                  <Td isNumeric>
+                    Date: {formattedDeleteDate} <br /> Time:{" "}
+                    {formattedDeleteTime}
+                  </Td>
                   <Td>
                     <Select
                       variant="filled"
@@ -119,16 +131,16 @@ export default async function JobsTable() {
                     >
                       <EditablePreview
                         w="100%"
-                        minH="50px"
-                        h="80px"
+                        minH="40px"
+                        h="40px"
                         overflowY="scroll"
-                        resize="vertical"
+                        resize="both"
                         border="1px solid grey"
                         p="5px"
                       />
                       <EditableTextarea
                         p="5px"
-                        resize="vertical"
+                        resize="both"
                         maxH="200px"
                         minH="80px"
                         h="auto"
@@ -140,17 +152,17 @@ export default async function JobsTable() {
                     <Editable value={job.jobDescription}>
                       <EditablePreview
                         w="100%"
-                        minH="50px"
-                        h="80px"
+                        minH="40px"
+                        h="40px"
                         overflowY="scroll"
-                        resize="vertical"
+                        resize="both"
                         border="1px solid grey"
                         p="5px"
                         whiteSpace="pre-wrap"
                       />
                       <EditableTextarea
                         p="5px"
-                        resize="vertical"
+                        resize="both"
                         maxH="200px"
                         minH="80px"
                         h="auto"
@@ -162,17 +174,17 @@ export default async function JobsTable() {
                     <Editable value={job.additionalInformation}>
                       <EditablePreview
                         w="100%"
-                        minH="50px"
-                        h="80px"
+                        minH="40px"
+                        h="40px"
                         overflowY="scroll"
-                        resize="vertical"
+                        resize="both"
                         border="1px solid grey"
                         p="5px"
                         whiteSpace="pre-wrap"
                       />
                       <EditableTextarea
                         p="5px"
-                        resize="vertical"
+                        resize="both"
                         maxH="200px"
                         minH="80px"
                         h="auto"
