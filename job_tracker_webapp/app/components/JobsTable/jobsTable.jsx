@@ -1,4 +1,5 @@
-// "use client";
+"use client";
+import data from "@/data/data";
 import {
   Table,
   Thead,
@@ -16,22 +17,40 @@ import {
 } from "@chakra-ui/react";
 
 import axios from "axios";
+import { debounce } from "lodash";
+import { useEffect, useState } from "react";
 
-async function getJobs() {
-  try {
-    const initialJobs = await axios.get("http://localhost:5000/appliedJobs");
-    return initialJobs;
-  } catch (error) {
-    console.log(`No Response ${error}`);
-    throw error;
-  }
-}
+export default function JobsTable() {
+  const [jobState, setJobState] = useState([]);
 
-export default async function JobsTable() {
-  const jobs = await getJobs().then((jobs) => {
-    return jobs.data;
-  });
+  useEffect(() => {
+    const getJobs = async () => {
+      try {
+        const initialJobs = await axios.get(
+          "http://localhost:5000/appliedJobs"
+        );
+        setJobState(initialJobs.data);
+      } catch (error) {
+        console.log(`No Response ${error}`);
+        throw error;
+      }
+    };
+    getJobs();
+  }, []);
 
+  const onChange = debounce(async (e, id, field) => {
+    try {
+      await axios.put("http://localhost:5000/updateJob", {
+        id,
+        updateV: e,
+        field: field,
+      });
+      console.log("Field updated successfully.");
+    } catch (error) {
+      console.error("Error updating field:", error);
+      throw error;
+    }
+  }, 1000);
   return (
     <>
       <TableContainer fontSize="10px">
@@ -41,20 +60,13 @@ export default async function JobsTable() {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>Position Title</Th>
-              <Th>Company</Th>
-              <Th>Location</Th>
-              <Th>Experence level</Th>
-              <Th>Applied Date</Th>
-              <Th>Delete Date</Th>
-              <Th>Status</Th>
-              <Th>Pre-Interview Tasks</Th>
-              <Th>Job Description</Th>
-              <Th>Additional Information</Th>
+              {data.Headers.map((header, key) => {
+                return <Th key={key}>{header}</Th>;
+              })}
             </Tr>
           </Thead>
           <Tbody>
-            {jobs.map((job, key) => {
+            {jobState.map((job, key) => {
               const appliedDate = new Date(job.appliedDate);
               const deleteDate = new Date(job.deleteDeadline);
 
@@ -73,29 +85,50 @@ export default async function JobsTable() {
               return (
                 <Tr key={key}>
                   <Td>
-                    <Editable w="100%" defaultValue={job.positionTitle}>
-                      <EditablePreview w="100%"/>
-                      <EditableInput w="100%" />
-                    </Editable>
-                  </Td>
-                  <Td>
-                    <Editable w="100%" defaultValue={job.company}>
+                    <Editable
+                      w="100%"
+                      defaultValue={job.positionTitle}
+                      onChange={(e) => {
+                        onChange(e, job._id, "positionTitle");
+                      }}
+                    >
                       <EditablePreview w="100%" />
                       <EditableInput w="100%" />
                     </Editable>
                   </Td>
                   <Td>
-                    <Editable defaultValue={job.location}>
-                      <EditablePreview w="100%"/>
-                      <EditableInput w="100%"/>
+                    <Editable
+                      w="100%"
+                      defaultValue={job.company}
+                      onChange={(e) => {
+                        onChange(e, job._id, "company");
+                      }}
+                    >
+                      <EditablePreview w="100%" />
+                      <EditableInput w="100%" />
+                    </Editable>
+                  </Td>
+                  <Td>
+                    <Editable
+                      defaultValue={job.location}
+                      onChange={(e) => {
+                        onChange(e, job._id, "location");
+                      }}
+                    >
+                      <EditablePreview w="100%" />
+                      <EditableInput w="100%" />
                     </Editable>
                   </Td>
                   <Td>
                     <Select
                       variant="filled"
                       // placeholder="medium size"
-                      value={job.experienceLevel}
+                      defaultValue={job.experienceLevel}
                       size="xs"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        onChange(value, job._id, "experienceLevel");
+                      }}
                     >
                       <option value="Entry Level">Entry Level</option>
                       <option value="Mid Level">Mid Level</option>
@@ -113,9 +146,13 @@ export default async function JobsTable() {
                   <Td>
                     <Select
                       variant="filled"
-                      value={job.status}
+                      defaultValue={job.status}
                       size="xs"
                       width="100px"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        onChange(value, job._id, "status");
+                      }}
                     >
                       <option value="Applied">Applied</option>
                       <option value="Screening">Screening</option>

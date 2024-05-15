@@ -3,7 +3,7 @@ const app = express();
 const port = 5000;
 const mongoose = require("mongoose");
 const Application = require("./models/ApplicationS");
-const cors = require('cors');
+const cors = require("cors");
 require("dotenv").config();
 
 app.use(cors());
@@ -16,8 +16,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => {
     console.log("Error connecting to MongoDB:", error);
-});
-
+  });
 
 app.post("/", async (req, res) => {
   const {
@@ -71,6 +70,21 @@ app.get("/appliedJobs", async (req, res) => {
   } catch (error) {
     console.error("Error fetching job data:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.put("/updateJob", async (req, res) => {
+  const id = req.body.id;
+  const updatedValue = req.body.updateV;
+  const field = req.body.field;
+  
+  try {
+    await Application.findByIdAndUpdate(id, {$set: { [field]: updatedValue}})
+    console.log("Updated Successfully")
+    res.status(200)
+  } catch (error) {
+    console.log("Update Error: ", error);
+    res.status(500).json({message: 'Internal server error'})
   }
 });
 
