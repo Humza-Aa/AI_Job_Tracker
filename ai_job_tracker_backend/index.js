@@ -1,38 +1,70 @@
 const express = require("express");
 const app = express();
-const port = 3000;
-const { google } = require("googleapis");
-app.use(express.json());
+const port = 5000;
+const mongoose = require("mongoose");
+const Application = require("./models/ApplicationS");
+const cors = require("cors");
+const passport = require("passport");
+const session = require("express-session");
+const crypto = require("crypto");
 require("dotenv").config();
-const checkIfSheetExists = require("./Functions/checkIfSheetExists");
-const createSheet = require("./Functions/createSheet");
+
+app.use(cors());
+app.use(express.json());
+
+const secret = crypto.randomBytes(64).toString("hex");
+
+app.use(
+  session({
+    secret,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
+
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    dbName: "Jobs",
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((error) => {
+    console.log("Error connecting to MongoDB:", error);
+  });
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Route for handling the callback from Google OAuth 2.0
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+// Route for logging out
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
 
 app.post("/", async (req, res) => {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: "Creds/credentials.json",
-    scopes: "https://www.googleapis.com/auth/spreadsheets",
-  });
-
-  const client = await auth.getClient();
-
-  const sheet = google.sheets({
-    version: "v4",
-    auth: client,
-  });
-
-  const spreadsheetId = process.env.SPREADSHEETID;
-
-  const today = new Date();
-  const appliedDate = today.toISOString().split("T")[0];
-  const month = today.toLocaleString("default", { month: "short" });
-  const year = today.getFullYear();
-  const sheetName = `${month}${year}`;
-
-  // Calculate deleteDeadline as today's date plus 1 month
-  const deleteDeadlineDate = new Date(today);
-  deleteDeadlineDate.setMonth(deleteDeadlineDate.getMonth() + 1);
-  const deleteDeadline = deleteDeadlineDate.toISOString().split("T")[0];
-
   const {
     positionTitle,
     company,
@@ -44,88 +76,63 @@ app.post("/", async (req, res) => {
     additionalInformation,
   } = req.body;
 
-  const validExperienceLevels = ["Entry Level", "Mid Level", "Senior Level"];
-  const validStatusOptions = [
-    "Saved",
-    "Applied",
-    "Screening",
-    "Interviewing",
-    "Offer",
-    "Rejected",
-  ];
+  const currentDate = new Date();
 
-  if (
-    !validExperienceLevels.includes(experienceLevel) ||
-    !validStatusOptions.includes(status)
-  ) {
-    return res
-      .status(400)
-      .json({ error: "Invalid experience level or status" });
-  }
+  const torontoOffset = -4 * 60;
+  const torontoTime = new Date(currentDate.getTime() + torontoOffset * 60000);
 
-  const values = [
-    [
-      positionTitle,
-      company,
-      location,
-      experienceLevel,
-      appliedDate,
-      deleteDeadline,
-      status,
-      pre_InterviewTasks,
-      jobDescription,
-      additionalInformation,
-    ],
-  ];
+  const appliedDate = torontoTime;
+
+  const deleteDeadline = new Date(torontoTime);
+  deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
+
+  const newApplication = new Application({
+    positionTitle,
+    company,
+    location,
+    experienceLevel,
+    appliedDate,
+    deleteDeadline,
+    status,
+    pre_InterviewTasks,
+    jobDescription,
+    additionalInformation,
+  });
 
   try {
-    const sheetExists = await checkIfSheetExists(
-      sheetName,
-      sheet,
-      spreadsheetId
-    );
-    console.log(sheetExists)
-    if (!sheetExists) {
-      // If the sheet tab doesn't exist, create it
-      await createSheet(sheetName, sheet, spreadsheetId);
-      // Add headings to the first row
-      const headings = [
-        [
-          "Position Title",
-          "Company",
-          "Location",
-          "Experience Level",
-          "Applied Date",
-          "Delete Deadline",
-          "Status",
-          "Pre-Interview Tasks",
-          "Job Description",
-          "Additional Information",
-        ],
-      ];
-      await sheet.spreadsheets.values.update({
-        spreadsheetId,
-        range: `${sheetName}!A1:J1`,
-        valueInputOption: "USER_ENTERED",
-        resource: {
-          values: headings,
-        },
-      });
-    }
-
-    await sheet.spreadsheets.values.append({
-      spreadsheetId,
-      range: `${sheetName}!A:J`,
-      valueInputOption: "USER_ENTERED",
-      resource: {
-        values,
-      },
-    });
-
+    await newApplication.save();
     res.sendStatus(200);
   } catch (error) {
-    // console.error("Error appending to Google Sheet:", error);
+    console.error("Error saving application to MongoDB:", error);
     res.sendStatus(500);
+  }
+});
+
+app.get("/appliedJobs", async (req, res) => {
+  // console.log(req)
+  try {
+    const jobs = await Application.find();
+    res.json(jobs);
+  } catch (error) {
+    console.error("Error fetching job data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.put("/updateJob", async (req, res) => {
+  const id = req.body.id;
+  const updatedValue = req.body.updateV;
+  const field = req.body.field;
+
+  try {
+    await Application.findByIdAndUpdate(id, {
+      $set: { [field]: updatedValue },
+    });
+    console.log("Updated Successfully");
+    res.status(200);
+  } catch (error) {
+    console.log("Update Error: ", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
