@@ -4,10 +4,36 @@ const port = 5000;
 const mongoose = require("mongoose");
 const Application = require("./models/ApplicationS");
 const cors = require("cors");
+const passport = require("passport");
+const session = require("express-session");
+const crypto = require("crypto");
 require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
+
+const secret = crypto.randomBytes(64).toString("hex");
+
+app.use(
+  session({
+    secret,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -17,6 +43,26 @@ mongoose
   .catch((error) => {
     console.log("Error connecting to MongoDB:", error);
   });
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Route for handling the callback from Google OAuth 2.0
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+// Route for logging out
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
 
 app.post("/", async (req, res) => {
   const {
@@ -77,14 +123,16 @@ app.put("/updateJob", async (req, res) => {
   const id = req.body.id;
   const updatedValue = req.body.updateV;
   const field = req.body.field;
-  
+
   try {
-    await Application.findByIdAndUpdate(id, {$set: { [field]: updatedValue}})
-    console.log("Updated Successfully")
-    res.status(200)
+    await Application.findByIdAndUpdate(id, {
+      $set: { [field]: updatedValue },
+    });
+    console.log("Updated Successfully");
+    res.status(200);
   } catch (error) {
     console.log("Update Error: ", error);
-    res.status(500).json({message: 'Internal server error'})
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
