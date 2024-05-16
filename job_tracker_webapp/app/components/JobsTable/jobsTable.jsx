@@ -165,6 +165,9 @@ export default function JobsTable() {
                     <Editable
                       maxW="200px"
                       defaultValue={job.pre_InterviewTasks}
+                      onChange={(e) => {
+                        onChange(e, job._id, "pre_InterviewTasks");
+                      }}
                     >
                       <EditablePreview
                         w="100%"
@@ -186,7 +189,12 @@ export default function JobsTable() {
                     </Editable>
                   </Td>
                   <Td>
-                    <Editable value={job.jobDescription}>
+                    <Editable
+                      defaultValue={job.jobDescription}
+                      onChange={(e) => {
+                        onChange(e, job._id, "jobDescription");
+                      }}
+                    >
                       <EditablePreview
                         w="100%"
                         minH="40px"
@@ -208,7 +216,12 @@ export default function JobsTable() {
                     </Editable>
                   </Td>
                   <Td>
-                    <Editable value={job.additionalInformation}>
+                    <Editable
+                      defaultValue={job.additionalInformation}
+                      onChange={(e) => {
+                        onChange(e, job._id, "additionalInformation");
+                      }}
+                    >
                       <EditablePreview
                         w="100%"
                         minH="40px"
