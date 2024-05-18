@@ -3,11 +3,14 @@ const app = express();
 const port = 5000;
 const mongoose = require("mongoose");
 const Application = require("./models/ApplicationS");
+const User = require("./models/User");
 const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
 const crypto = require("crypto");
 require("dotenv").config();
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const fs = require("fs");
 
 app.use(cors());
 app.use(express.json());
@@ -25,16 +28,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
-
 mongoose
   .connect(process.env.MONGODB_URI, {
     dbName: "Jobs",
@@ -44,9 +37,49 @@ mongoose
     console.log("Error connecting to MongoDB:", error);
   });
 
+const credentials = JSON.parse(
+  fs.readFileSync("Creds/gmail_credentials.json")
+).web;
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: credentials.client_id,
+      clientSecret: credentials.client_secret,
+      callbackURL: "http://localhost:5000/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ googleId: profile.id });
+
+        if (!user) {
+          user = new User({
+            googleId: profile.id,
+            displayName: profile.displayName,
+            email: profile.emails[0].value,
+            accessToken,
+            refreshToken,
+          });
+          await user.save();
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: [
+      "profile",
+      "email",
+      "https://www.googleapis.com/auth/gmail.readonly",
+    ],
+  })
 );
 
 // Route for handling the callback from Google OAuth 2.0
@@ -54,14 +87,32 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect("/");
+    res.redirect("http://localhost:3000/");
   }
 );
 
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+
 // Route for logging out
 app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
+  req.logout((err) => {
+    if (err) {
+      console.error("Error logging out:", err);
+      return res.status(500).json({ error: "Failed to logout" });
+    }
+    res.redirect("/");
+  });
 });
 
 app.post("/", async (req, res) => {

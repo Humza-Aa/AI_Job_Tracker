@@ -5,7 +5,7 @@ export default function Login() {
   return (
     <>
       <Button>
-        <Link href="/login">Sign</Link>
+        <Link href="http://localhost:5000/auth/google">Sign</Link>
       </Button>
     </>
   );
