@@ -21,7 +21,8 @@ app.use(
   session({
     secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: { secure: false },
   })
 );
 
@@ -87,19 +88,30 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect("http://localhost:3000/");
+    req.session.save((err) => {
+      if (err) {
+        console.error("Error saving session:", err);
+        res.redirect("/login");
+      } else {
+        res.redirect("http://localhost:3000/homepage");
+      }
+    });
   }
 );
 
 passport.serializeUser((user, done) => {
+  console.log("Serializing user:", user);
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log("Deserializing user with ID:", id);
   try {
     const user = await User.findById(id);
+    console.log("User found during deserialization:", user); // Log the user object found
     done(null, user);
   } catch (err) {
+    console.error("Error during deserialization:", err); // Log any errors that occur
     done(err, null);
   }
 });
@@ -136,8 +148,10 @@ app.post("/", async (req, res) => {
 
   const deleteDeadline = new Date(torontoTime);
   deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
-
+  // const userId = req.user._id;
+  console.log(req);
   const newApplication = new Application({
+    // user: userId,
     positionTitle,
     company,
     location,
@@ -160,7 +174,8 @@ app.post("/", async (req, res) => {
 });
 
 app.get("/appliedJobs", async (req, res) => {
-  // console.log(req)
+  // const userId = req.user._id;
+  console.log(req);
   try {
     const jobs = await Application.find();
     res.json(jobs);
