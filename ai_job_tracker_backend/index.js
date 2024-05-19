@@ -12,7 +12,12 @@ require("dotenv").config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const fs = require("fs");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // allow requests from localhost:3000
+    credentials: true, // allow credentials
+  })
+);
 app.use(express.json());
 
 const secret = crypto.randomBytes(64).toString("hex");
@@ -51,6 +56,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log("Google profile:", profile);
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
@@ -71,6 +77,23 @@ passport.use(
     }
   )
 );
+
+passport.serializeUser((user, done) => {
+  console.log("Serializing user:", user);
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  console.log("Deserializing user with ID:", id);
+  try {
+    const user = await User.findById(id);
+    console.log("User found during deserialization:", user); // Log the user object found
+    done(null, user);
+  } catch (err) {
+    console.error("Error during deserialization:", err); // Log any errors that occur
+    done(err, null);
+  }
+});
 
 app.get(
   "/auth/google",
@@ -99,23 +122,6 @@ app.get(
   }
 );
 
-passport.serializeUser((user, done) => {
-  console.log("Serializing user:", user);
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  console.log("Deserializing user with ID:", id);
-  try {
-    const user = await User.findById(id);
-    console.log("User found during deserialization:", user); // Log the user object found
-    done(null, user);
-  } catch (err) {
-    console.error("Error during deserialization:", err); // Log any errors that occur
-    done(err, null);
-  }
-});
-
 // Route for logging out
 app.get("/logout", (req, res) => {
   req.logout((err) => {
@@ -125,6 +131,23 @@ app.get("/logout", (req, res) => {
     }
     res.redirect("/");
   });
+});
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: "Unauthorized" });
+}
+
+app.get("/current_user", (req, res) => {
+  console.log("Authenticated:", req.isAuthenticated());
+  console.log("User:", req.user);
+  if (req.isAuthenticated()) {
+    res.json({ user: req.user });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
 });
 
 app.post("/", async (req, res) => {
@@ -149,7 +172,7 @@ app.post("/", async (req, res) => {
   const deleteDeadline = new Date(torontoTime);
   deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
   // const userId = req.user._id;
-  console.log(req);
+  // console.log(req);
   const newApplication = new Application({
     // user: userId,
     positionTitle,
@@ -174,10 +197,10 @@ app.post("/", async (req, res) => {
 });
 
 app.get("/appliedJobs", async (req, res) => {
-  // const userId = req.user._id;
-  console.log(req);
+  const userId = req.user?._id;
+  console.log(req.user);
   try {
-    const jobs = await Application.find();
+    const jobs = await Application.find({ user: userId });
     res.json(jobs);
   } catch (error) {
     console.error("Error fetching job data:", error);

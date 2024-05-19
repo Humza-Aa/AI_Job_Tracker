@@ -19,6 +19,8 @@ import {
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
+import TestUserButton from "../TestUser";
+import Logout from "../Logout/Logout";
 
 export default function JobsTable() {
   const [jobState, setJobState] = useState([]);
@@ -27,7 +29,10 @@ export default function JobsTable() {
     const getJobs = async () => {
       try {
         const initialJobs = await axios.get(
-          "http://localhost:5000/appliedJobs"
+          "http://localhost:5000/appliedJobs",
+          {
+            withCredentials: true,
+          }
         );
         setJobState(initialJobs.data);
       } catch (error) {
@@ -248,6 +253,8 @@ export default function JobsTable() {
           </Tbody>
         </Table>
       </TableContainer>
+      <TestUserButton />
+      <Logout />
     </>
   );
 }
