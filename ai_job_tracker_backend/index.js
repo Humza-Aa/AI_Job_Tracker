@@ -12,6 +12,7 @@ require("dotenv").config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const fs = require("fs");
 const jobRoutes = require("./routes/jobRoutes");
+const googleRoutes = require("./routes/googleAuthRoute")
 
 app.use(
   cors({
@@ -96,44 +97,44 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: [
-      "profile",
-      "email",
-      "https://www.googleapis.com/auth/gmail.readonly",
-    ],
-  })
-);
+// app.get(
+//   "/auth/google",
+//   passport.authenticate("google", {
+//     scope: [
+//       "profile",
+//       "email",
+//       "https://www.googleapis.com/auth/gmail.readonly",
+//     ],
+//   })
+// );
 
 // Route for handling the callback from Google OAuth 2.0
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    req.session.save((err) => {
-      if (err) {
-        console.error("Error saving session:", err);
-        res.redirect("/login");
-      } else {
-        res.redirect("http://localhost:3000/homepage");
-      }
-    });
-  }
-);
+// app.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", { failureRedirect: "/login" }),
+//   (req, res) => {
+//     req.session.save((err) => {
+//       if (err) {
+//         console.error("Error saving session:", err);
+//         res.redirect("/login");
+//       } else {
+//         res.redirect("http://localhost:3000/homepage");
+//       }
+//     });
+//   }
+// );
 
 // Route for logging out
-app.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.error("Error logging out:", err);
-      return res.status(500).json({ error: "Failed to logout" });
-    }
-    res.redirect("/");
-  });
-});
-
+// app.get("/logout", (req, res) => {
+//   req.logout((err) => {
+//     if (err) {
+//       console.error("Error logging out:", err);
+//       return res.status(500).json({ error: "Failed to logout" });
+//     }
+//     res.redirect("/");
+//   });
+// });
+app.use("/auth", googleRoutes)
 app.use("/api/jobs", jobRoutes);
 
 function ensureAuthenticated(req, res, next) {
@@ -152,85 +153,6 @@ app.get("/current_user", (req, res) => {
     res.status(401).json({ message: "Unauthorized" });
   }
 });
-
-// app.post("/apply", async (req, res) => {
-//   const {
-//     positionTitle,
-//     company,
-//     location,
-//     experienceLevel,
-//     status,
-//     pre_InterviewTasks,
-//     jobDescription,
-//     additionalInformation,
-//   } = req.body;
-
-//   const currentDate = new Date();
-
-//   const torontoOffset = -4 * 60;
-//   const torontoTime = new Date(currentDate.getTime() + torontoOffset * 60000);
-
-//   const appliedDate = torontoTime;
-
-//   const deleteDeadline = new Date(torontoTime);
-//   deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
-//   // const userId = req.user._id;
-//   // console.log(req);
-//   const newApplication = new Application({
-//     // user: userId,
-//     positionTitle,
-//     company,
-//     location,
-//     experienceLevel,
-//     appliedDate,
-//     deleteDeadline,
-//     status,
-//     pre_InterviewTasks,
-//     jobDescription,
-//     additionalInformation,
-//   });
-
-//   try {
-//     await newApplication.save();
-//     res.sendStatus(200);
-//   } catch (error) {
-//     console.error("Error saving application to MongoDB:", error);
-//     res.sendStatus(500);
-//   }
-// });
-
-// app.get("/appliedJobs", async (req, res) => {
-//   const userId = req.user?._id;
-//   if (!req.isAuthenticated()) {
-//     return res
-//       .status(401)
-//       .json({ error: "Unauthorized: User not authenticated" });
-//   }
-//   try {
-//     const jobs = await Application.find({ user: userId });
-//     res.json(jobs);
-//   } catch (error) {
-//     console.error("Error fetching job data:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-// app.put("/updateJob", async (req, res) => {
-//   const id = req.body.id;
-//   const updatedValue = req.body.updateV;
-//   const field = req.body.field;
-
-//   try {
-//     await Application.findByIdAndUpdate(id, {
-//       $set: { [field]: updatedValue },
-//     });
-//     console.log("Updated Successfully");
-//     res.status(200);
-//   } catch (error) {
-//     console.log("Update Error: ", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

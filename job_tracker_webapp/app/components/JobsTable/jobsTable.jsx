@@ -30,7 +30,7 @@ export default function JobsTable() {
     const getJobs = async () => {
       try {
         const initialJobs = await axios.get(
-          "http://localhost:5000/appliedJobs",
+          "http://localhost:5000/api/jobs/getAppliedJobs",
           {
             withCredentials: true,
           }
@@ -50,7 +50,7 @@ export default function JobsTable() {
 
   const onChange = debounce(async (e, id, field) => {
     try {
-      await axios.put("http://localhost:5000/updateJob", {
+      await axios.put("http://localhost:5000/api/jobs/updateJob", {
         id,
         updateV: e,
         field: field,

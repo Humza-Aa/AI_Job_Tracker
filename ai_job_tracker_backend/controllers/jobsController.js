@@ -21,10 +21,10 @@ exports.jobApply = async (req, res) => {
 
   const deleteDeadline = new Date(torontoTime);
   deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
-  // const userId = req.user._id;
+  const userId = req.user._id;
   // console.log(req);
   const newApplication = new Application({
-    // user: userId,
+    user: userId,
     positionTitle,
     company,
     location,
