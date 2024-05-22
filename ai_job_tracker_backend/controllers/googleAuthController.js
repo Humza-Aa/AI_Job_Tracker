@@ -31,6 +31,17 @@ exports.googleCallback = (req, res, next) => {
   )(req, res, next);
 };
 
+exports.isAuthenticated = (req, res) => {
+  console.log("Authenticated:", req.isAuthenticated());
+  console.log("User:", req.user);
+  // console.log(req)
+  if (req.isAuthenticated()) {
+    res.json({ user: req.user });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
 exports.googleLogout = (req, res) => {
   req.logout((err) => {
     if (err) {

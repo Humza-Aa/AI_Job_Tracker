@@ -27,16 +27,6 @@ mongoose
 app.use("/auth", googleRoutes);
 app.use("/api/jobs", jobRoutes);
 
-app.get("/current_user", (req, res) => {
-  console.log("Authenticated:", req.isAuthenticated());
-  console.log("User:", req.user);
-  if (req.isAuthenticated()) {
-    res.json({ user: req.user });
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-});
-
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

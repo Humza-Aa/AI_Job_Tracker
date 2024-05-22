@@ -17,11 +17,15 @@ import {
   useColorModeValue,
   Stack,
   Heading,
+  Link,
+  Spinner,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { isAuthenticated } from "@/app/api/Auth";
+import useUser from "@/app/hooks/useUser";
 
 const Links = ["Dashboard", "Projects", "Team"];
 
@@ -46,7 +50,15 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isauthenticated, setIsauthenticated] = useState(false);
+  const { user, isAuthenticated, loading} = useUser();
+
+  if (loading) {
+    return (
+      <Flex justifyContent="center" alignItems="center" height="100vh">
+        <Spinner size="xl" />
+      </Flex>
+    );
+  }
 
   return (
     <>
@@ -73,7 +85,7 @@ export default function NavBar() {
               ))}
             </HStack>
           </HStack>
-          {isauthenticated ? (
+          {isAuthenticated && user ? (
             <Flex alignItems={"center"}>
               <Menu>
                 <MenuButton
@@ -83,12 +95,7 @@ export default function NavBar() {
                   cursor={"pointer"}
                   minW={0}
                 >
-                  <Avatar
-                    size={"sm"}
-                    src={
-                      "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                    }
-                  />
+                  <Avatar size={"sm"} src={user.profileImage} />
                 </MenuButton>
                 <MenuList>
                   <MenuItem>Link 1</MenuItem>
@@ -100,14 +107,16 @@ export default function NavBar() {
             </Flex>
           ) : (
             <>
-              <Button>
-                Login with{" "}
-                <span>
-                  <Box pl="6px">
-                    <FontAwesomeIcon icon={faGoogle} />
-                  </Box>
-                </span>
-              </Button>
+              <Link href="http://localhost:5000/auth/google">
+                <Button>
+                  Login with{" "}
+                  <span>
+                    <Box pl="6px">
+                      <FontAwesomeIcon icon={faGoogle} />
+                    </Box>
+                  </span>
+                </Button>
+              </Link>
             </>
           )}
         </Flex>

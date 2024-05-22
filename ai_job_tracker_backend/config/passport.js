@@ -25,6 +25,7 @@ passport.use(
             googleId: profile.id,
             displayName: profile.displayName,
             email: profile.emails[0].value,
+            profileImage: profile.photos[0].value,
             accessToken,
             refreshToken,
           });
