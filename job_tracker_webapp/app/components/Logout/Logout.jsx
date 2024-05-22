@@ -5,7 +5,7 @@ import axios from "axios";
 const Logout = () => {
   const fetchUser = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/auth/logout", {
+      const response = await axios.get("http://localhost:5000/auth/google/logout", {
         withCredentials: true,
       });
       console.log("User data:", response.data.user);
