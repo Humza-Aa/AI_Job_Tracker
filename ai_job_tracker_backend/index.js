@@ -6,6 +6,7 @@ app.use(express.json());
 require("dotenv").config();
 const checkIfSheetExists = require("./Functions/checkIfSheetExists");
 const createSheet = require("./Functions/createSheet");
+const moment = require("moment-timezone");
 
 app.post("/", async (req, res) => {
   const auth = new google.auth.GoogleAuth({
@@ -22,16 +23,16 @@ app.post("/", async (req, res) => {
 
   const spreadsheetId = process.env.SPREADSHEETID;
 
-  const today = new Date();
-  const appliedDate = today.toISOString().split("T")[0];
-  const month = today.toLocaleString("default", { month: "short" });
-  const year = today.getFullYear();
+  const today = moment().tz("America/Toronto");
+
+  const appliedDate = today.format("YYYY-MM-DD");
+
+  const month = today.format("MMM");
+  const year = today.format("YYYY");
   const sheetName = `${month}${year}`;
 
-  // Calculate deleteDeadline as today's date plus 1 month
-  const deleteDeadlineDate = new Date(today);
-  deleteDeadlineDate.setMonth(deleteDeadlineDate.getMonth() + 1);
-  const deleteDeadline = deleteDeadlineDate.toISOString().split("T")[0];
+  const deleteDeadlineDate = today.clone().add(1, "month");
+  const deleteDeadline = deleteDeadlineDate.format("YYYY-MM-DD");
 
   const {
     positionTitle,
@@ -79,39 +80,39 @@ app.post("/", async (req, res) => {
   ];
 
   try {
-    const sheetExists = await checkIfSheetExists(
-      sheetName,
-      sheet,
-      spreadsheetId
-    );
-    console.log(sheetExists)
-    if (!sheetExists) {
-      // If the sheet tab doesn't exist, create it
-      await createSheet(sheetName, sheet, spreadsheetId);
-      // Add headings to the first row
-      const headings = [
-        [
-          "Position Title",
-          "Company",
-          "Location",
-          "Experience Level",
-          "Applied Date",
-          "Delete Deadline",
-          "Status",
-          "Pre-Interview Tasks",
-          "Job Description",
-          "Additional Information",
-        ],
-      ];
-      await sheet.spreadsheets.values.update({
-        spreadsheetId,
-        range: `${sheetName}!A1:J1`,
-        valueInputOption: "USER_ENTERED",
-        resource: {
-          values: headings,
-        },
-      });
-    }
+    // const sheetExists = await checkIfSheetExists(
+    //   sheetName,
+    //   sheet,
+    //   spreadsheetId
+    // );
+    // console.log(sheetExists)
+    // if (!sheetExists) {
+    //   // If the sheet tab doesn't exist, create it
+    //   await createSheet(sheetName, sheet, spreadsheetId);
+    //   // Add headings to the first row
+    //   const headings = [
+    //     [
+    //       "Position Title",
+    //       "Company",
+    //       "Location",
+    //       "Experience Level",
+    //       "Applied Date",
+    //       "Delete Deadline",
+    //       "Status",
+    //       "Pre-Interview Tasks",
+    //       "Job Description",
+    //       "Additional Information",
+    //     ],
+    //   ];
+    //   await sheet.spreadsheets.values.update({
+    //     spreadsheetId,
+    //     range: `${sheetName}!A1:J1`,
+    //     valueInputOption: "USER_ENTERED",
+    //     resource: {
+    //       values: headings,
+    //     },
+    //   });
+    // }
 
     await sheet.spreadsheets.values.append({
       spreadsheetId,
@@ -121,7 +122,7 @@ app.post("/", async (req, res) => {
         values,
       },
     });
-    console.log("done", company)
+    console.log("done", company);
     res.sendStatus(200);
   } catch (error) {
     // console.error("Error appending to Google Sheet:", error);
