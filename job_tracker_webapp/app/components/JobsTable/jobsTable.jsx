@@ -264,8 +264,6 @@ export default function JobsTable() {
           </Tbody>
         </Table>
       </TableContainer>
-      <TestUserButton />
-      <Logout />
     </>
   );
 }

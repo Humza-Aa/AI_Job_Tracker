@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@chakra-ui/react";
+import { Button, Link } from "@chakra-ui/react";
 import axios from "axios";
 
 const Logout = () => {
@@ -14,7 +14,11 @@ const Logout = () => {
     }
   };
 
-  return <Button onClick={fetchUser}>Logout</Button>;
+  return (
+    <Link href="/">
+      <Button onClick={fetchUser}>Logout</Button>
+    </Link>
+  );
 };
 
 export default Logout;

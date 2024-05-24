@@ -14,5 +14,5 @@ export default function HomePage() {
     );
   }
 
-  return <>{isAuthenticated ? <JobsTable /> : <>fuk</>}</>;
+  return <>{isAuthenticated ? <JobsTable /> : <>fbuk</>}</>;
 }

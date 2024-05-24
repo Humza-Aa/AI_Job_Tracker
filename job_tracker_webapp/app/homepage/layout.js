@@ -1,3 +1,3 @@
-export default function loginLayout({ children }) {
+export default function homeLayout({ children }) {
   return <section>{children}</section>;
 }

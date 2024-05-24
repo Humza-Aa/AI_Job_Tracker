@@ -51,15 +51,7 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user, isAuthenticated } = useUser();
-  const [imageSrc, setImageSrc] = useState('');
-
-  useEffect(() => {
-    if (user?.profileImage) {
-      console.log(user?.profileImage)
-      setImageSrc(user.profileImage);
-    }
-  }, [user]);
+  const { user, isAuthenticated, loading } = useUser();
   return (
     <>
       <Box bgColor="blackAlpha.500" px={4}>
@@ -95,10 +87,11 @@ export default function NavBar() {
                   cursor={"pointer"}
                   minW={0}
                 >
-                  <Avatar
-                    size={"sm"}
-                    src={imageSrc}
-                  />
+                  {user.user.profileImage ? (
+                    <Avatar size={"sm"} src={user.user.profileImage} />
+                  ) : (
+                    <></>
+                  )}
                 </MenuButton>
                 <MenuList>
                   <MenuItem>Link 1</MenuItem>
@@ -112,16 +105,22 @@ export default function NavBar() {
             </Flex>
           ) : (
             <>
-              <Link href="http://localhost:5000/auth/google">
-                <Button>
-                  Login with{" "}
-                  <span>
-                    <Box pl="6px">
-                      <FontAwesomeIcon icon={faGoogle} />
-                    </Box>
-                  </span>
-                </Button>
-              </Link>
+              {!loading ? (
+                <Link href="http://localhost:5000/auth/google">
+                  <Button>
+                    Login with{" "}
+                    <span>
+                      <Box pl="6px">
+                        <FontAwesomeIcon icon={faGoogle} />
+                      </Box>
+                    </span>
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Box></Box>
+                </>
+              )}
             </>
           )}
         </Flex>
