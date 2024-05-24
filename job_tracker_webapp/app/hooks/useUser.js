@@ -25,6 +25,7 @@ const useUser = () => {
       } finally {
         setLoading(false);
       }
+      // console.log()
     };
 
     fetchUser();

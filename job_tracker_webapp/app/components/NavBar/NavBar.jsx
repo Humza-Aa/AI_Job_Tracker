@@ -26,6 +26,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { isAuthenticated } from "@/app/api/Auth";
 import useUser from "@/app/hooks/useUser";
+import Logout from "../Logout/Logout";
 
 const Links = ["Dashboard", "Projects", "Team"];
 
@@ -50,16 +51,15 @@ const NavLink = (props) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user, isAuthenticated, loading} = useUser();
+  const { user, isAuthenticated } = useUser();
+  const [imageSrc, setImageSrc] = useState('');
 
-  if (loading) {
-    return (
-      <Flex justifyContent="center" alignItems="center" height="100vh">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }
-
+  useEffect(() => {
+    if (user?.profileImage) {
+      console.log(user?.profileImage)
+      setImageSrc(user.profileImage);
+    }
+  }, [user]);
   return (
     <>
       <Box bgColor="blackAlpha.500" px={4}>
@@ -95,13 +95,18 @@ export default function NavBar() {
                   cursor={"pointer"}
                   minW={0}
                 >
-                  <Avatar size={"sm"} src={user.profileImage} />
+                  <Avatar
+                    size={"sm"}
+                    src={imageSrc}
+                  />
                 </MenuButton>
                 <MenuList>
                   <MenuItem>Link 1</MenuItem>
                   <MenuItem>Link 2</MenuItem>
                   <MenuDivider />
-                  <MenuItem>Link 3</MenuItem>
+                  <MenuItem>
+                    <Logout />
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Flex>

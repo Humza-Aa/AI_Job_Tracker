@@ -77,9 +77,7 @@ export default function JobsTable() {
           </Thead>
           <Tbody>
             {jobState.length == 0 ? (
-              <Tr>
-
-              </Tr>
+              <Tr></Tr>
             ) : (
               jobState.map((job, key) => {
                 const appliedDate = new Date(job.appliedDate);
