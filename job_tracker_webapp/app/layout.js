@@ -3,7 +3,7 @@ import { Providers } from "./provider/provider";
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" style={{ width: "100%" }}>
+    <html lang="en" style={{ width: "100%", height:"100%" }}>
       <body>
         <Providers>
           <NavBar />

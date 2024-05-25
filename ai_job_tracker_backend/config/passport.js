@@ -14,10 +14,14 @@ passport.use(
       clientID: credentials.client_id,
       clientSecret: credentials.client_secret,
       callbackURL: "http://localhost:5000/auth/google/callback",
+      accessType: "offline",
+      prompt: "consent",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("Google profile:", profile);
+        // console.log("Google profile:", profile);
+        // console.log('Access Token:', accessToken);
+        // console.log('Refresh Token:', refreshToken);
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
@@ -30,8 +34,13 @@ passport.use(
             refreshToken,
           });
           await user.save();
+        } else {
+          user.accessToken = accessToken;
+          if (refreshToken) {
+            user.refreshToken = refreshToken;
+          }
+          await user.save();
         }
-
         return done(null, user);
       } catch (err) {
         return done(err, null);
@@ -41,7 +50,7 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("Serializing user:", user);
+  console.log("Serializing user:");
   done(null, user.id);
 });
 
@@ -49,7 +58,7 @@ passport.deserializeUser(async (id, done) => {
   console.log("Deserializing user with ID:", id);
   try {
     const user = await User.findById(id);
-    console.log("User found during deserialization:", user); // Log the user object found
+    console.log("User found during deserialization:"); // Log the user object found
     done(null, user);
   } catch (err) {
     console.error("Error during deserialization:", err); // Log any errors that occur

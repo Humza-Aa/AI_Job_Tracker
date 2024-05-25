@@ -27,6 +27,7 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { isAuthenticated } from "@/app/api/Auth";
 import useUser from "@/app/hooks/useUser";
 import Logout from "../Logout/Logout";
+import Login from "../login/login";
 
 const Links = ["Dashboard", "Projects", "Team"];
 
@@ -52,6 +53,17 @@ const NavLink = (props) => {
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isAuthenticated, loading } = useUser();
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const imageSrc = user?.user?.profileImage;
+
+  useEffect(() => {
+    if (imageSrc) {
+      console.log(imageSrc);
+      setImageLoading(false);
+    }
+  }, [imageSrc]);
+
   return (
     <>
       <Box bgColor="blackAlpha.500" px={4}>
@@ -87,10 +99,10 @@ export default function NavBar() {
                   cursor={"pointer"}
                   minW={0}
                 >
-                  {user.user.profileImage ? (
+                  {user?.user?.profileImage ? (
                     <Avatar size={"sm"} src={user.user.profileImage} />
                   ) : (
-                    <></>
+                    <Spinner size="sm" />
                   )}
                 </MenuButton>
                 <MenuList>
@@ -106,16 +118,7 @@ export default function NavBar() {
           ) : (
             <>
               {!loading ? (
-                <Link href="http://localhost:5000/auth/google">
-                  <Button>
-                    Login with{" "}
-                    <span>
-                      <Box pl="6px">
-                        <FontAwesomeIcon icon={faGoogle} />
-                      </Box>
-                    </span>
-                  </Button>
-                </Link>
+                <Login />
               ) : (
                 <>
                   <Box></Box>

@@ -2,6 +2,8 @@ const passport = require("passport");
 
 exports.googleAuth = passport.authenticate("google", {
   scope: ["profile", "email", "https://www.googleapis.com/auth/gmail.readonly"],
+  accessType: 'offline',
+  prompt: 'consent'
 });
 
 exports.googleCallback = (req, res, next) => {
