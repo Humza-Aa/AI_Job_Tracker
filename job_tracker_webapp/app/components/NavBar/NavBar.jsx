@@ -53,16 +53,6 @@ const NavLink = (props) => {
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isAuthenticated, loading } = useUser();
-  const [imageLoading, setImageLoading] = useState(true);
-
-  const imageSrc = user?.user?.profileImage;
-
-  useEffect(() => {
-    if (imageSrc) {
-      console.log(imageSrc);
-      setImageLoading(false);
-    }
-  }, [imageSrc]);
 
   return (
     <>

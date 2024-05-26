@@ -50,15 +50,15 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("Serializing user:");
+  // console.log("Serializing user:");
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log("Deserializing user with ID:", id);
+  // console.log("Deserializing user with ID:", id);
   try {
     const user = await User.findById(id);
-    console.log("User found during deserialization:"); // Log the user object found
+    // console.log("User found during deserialization:"); // Log the user object found
     done(null, user);
   } catch (err) {
     console.error("Error during deserialization:", err); // Log any errors that occur

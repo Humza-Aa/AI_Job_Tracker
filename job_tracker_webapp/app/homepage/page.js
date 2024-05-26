@@ -19,7 +19,9 @@ export default function HomePage() {
   return (
     <>
       {isAuthenticated ? (
-        <JobsTable />
+        <>
+          <JobsTable /> <Emails />
+        </>
       ) : (
         <>
           <Flex justifyContent="center" alignItems="center" h="100vh">

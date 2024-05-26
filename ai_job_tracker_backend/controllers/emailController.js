@@ -54,7 +54,7 @@ exports.getEmails = async (req, res) => {
           id: message.id,
           format: "full",
         });
-        return email.data;
+        return parseEmail(email.data);
       })
     );
 
@@ -63,4 +63,40 @@ exports.getEmails = async (req, res) => {
     console.error("Error fetching emails:", error);
     res.status(500).send("Error fetching emails");
   }
+};
+
+const parseEmail = (email) => {
+  const headers = email.payload.headers;
+  const parts = email.payload.parts || [email.payload];
+
+  const getHeader = (name) =>
+    headers.find((header) => header.name === name)?.value;
+
+  const getBody = (parts) => {
+    let body = "";
+    parts.forEach((part) => {
+      if (part.mimeType === "text/plain" || part.mimeType === "text/html") {
+        body += Buffer.from(part.body.data || "", "base64").toString("utf-8");
+      }
+      if (part.parts) {
+        body += getBody(part.parts);
+      }
+      if (part.body && part.body.attachmentId) {
+        console.log(`Found attachment: ${part.filename}`);
+      }
+    });
+    return body;
+  };
+
+  return {
+    id: email.id,
+    threadId: email.threadId,
+    labelIds: email.labelIds,
+    snippet: email.snippet,
+    subject: getHeader("Subject"),
+    from: getHeader("From"),
+    to: getHeader("To"),
+    date: getHeader("Date"),
+    body: getBody(parts),
+  };
 };
