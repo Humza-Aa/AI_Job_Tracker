@@ -13,8 +13,8 @@ export default async function handleClick() {
         XPathResult.FIRST_ORDERED_NODE_TYPE,
         null
       ).singleNodeValue as HTMLElement;
-
       if (htmlContent == null) {
+        console.log(htmlContent);
         return <>hello</>;
       }
 
@@ -31,7 +31,6 @@ export default async function handleClick() {
       const jobTitle = jobTitleElement?.textContent?.trim() || "Not Found";
       const companyName = companyElement?.textContent?.trim() || "Not Found";
       const location = locationElement?.textContent?.trim() || "Not Found";
-      console.log(locationElement?.textContent);
       const jobDescription =
         jobDescriptionElement?.textContent?.trim() || "Not Found";
       const updatedInformation = [
