@@ -35,7 +35,7 @@ exports.googleCallback = (req, res, next) => {
 
 exports.isAuthenticated = (req, res) => {
   console.log("Authenticated:", req.isAuthenticated());
-  console.log("User:", req.user);
+  console.log("User:", req);
   // console.log(req)
   if (req.isAuthenticated()) {
     res.json({ user: req.user });
