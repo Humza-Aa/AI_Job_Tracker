@@ -125,7 +125,6 @@ app.post("/", async (req, res) => {
     console.log("done", company);
     res.sendStatus(200);
   } catch (error) {
-    // console.error("Error appending to Google Sheet:", error);
     res.sendStatus(500);
   }
 });

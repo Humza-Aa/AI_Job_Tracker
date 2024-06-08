@@ -90,9 +90,9 @@ const Data = {
     jobTitleE:
       "h1.job-details-jobs-unified-top-card__job-title, div.job-details-jobs-unified-top-card__job-title",
     companyE:
-      "div.job-details-jobs-unified-top-card__primary-description-container >* a",
+      "div.job-details-jobs-unified-top-card__company-name",
     locationE:
-      "div.job-details-jobs-unified-top-card__primary-description-container",
+      "div.job-details-jobs-unified-top-card__primary-description-container div > span:nth-of-type(1)",
     jobDescriptionE: "article.jobs-description__container",
   },
 };

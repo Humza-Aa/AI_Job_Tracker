@@ -15,8 +15,7 @@ export default async function handleClick() {
       ).singleNodeValue as HTMLElement;
 
       if (htmlContent == null) {
-        console.log("Not On Job Page");
-        return;
+        return <>hello</>;
       }
 
       const jobTitleElement = htmlContent.querySelector(
@@ -31,9 +30,8 @@ export default async function handleClick() {
       );
       const jobTitle = jobTitleElement?.textContent?.trim() || "Not Found";
       const companyName = companyElement?.textContent?.trim() || "Not Found";
-      const location = (
-        locationElement?.textContent?.trim() || "Not Found"
-      ).split("·")[1];
+      const location = locationElement?.textContent?.trim() || "Not Found";
+      console.log(locationElement?.textContent);
       const jobDescription =
         jobDescriptionElement?.textContent?.trim() || "Not Found";
       const updatedInformation = [

@@ -22,6 +22,10 @@ export default function Popup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    handleClick();
+  }, []);
+
+  useEffect(() => {
     chrome.runtime.onMessage.addListener((message) => {
       if (message.type === "updateInformation") {
         setInformation(message.data);
@@ -94,10 +98,6 @@ export default function Popup() {
               </TabPanel>
             </TabPanels>
           </Tabs>
-
-          <Button colorScheme="gray" onClick={handleClick}>
-            Scan Job
-          </Button>
           <Button
             isLoading={loading}
             onClick={() => {
