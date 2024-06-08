@@ -31,9 +31,7 @@ export default async function handleClick() {
       );
       const jobTitle = jobTitleElement?.textContent?.trim() || "Not Found";
       const companyName = companyElement?.textContent?.trim() || "Not Found";
-      const location = (
-        locationElement?.textContent?.trim() || "Not Found"
-      ).split("·")[1];
+      const location = locationElement?.textContent?.trim() || "Not Found";
       const jobDescription =
         jobDescriptionElement?.textContent?.trim() || "Not Found";
       const updatedInformation = [
