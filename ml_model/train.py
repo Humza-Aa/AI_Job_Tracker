@@ -76,8 +76,8 @@ for epoch in range(num_epochs):
         progress_bar.update(1)
 
 # Save the model
-model.save_pretrained('ml_model/models/bert-job-classifier')
-tokenizer.save_pretrained('ml_model/models/bert-job-classifier')
+model.save_pretrained('models/bert-job-classifier')
+tokenizer.save_pretrained('models/bert-job-classifier')
 
 # Evaluation
 model.eval()

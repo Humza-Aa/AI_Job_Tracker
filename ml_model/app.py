@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load the model and tokenizer
-model_path = 'ml_model/models/bert-job-classifier'
+model_path = 'models/bert-job-classifier'
 tokenizer = BertTokenizer.from_pretrained(model_path)
 model = BertForSequenceClassification.from_pretrained(model_path)
 
