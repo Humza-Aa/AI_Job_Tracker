@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Popup from "./components/Popup";
+import { Button, Heading } from "@chakra-ui/react";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -17,14 +18,15 @@ function App() {
   if (!user) {
     return (
       <div>
-        <h1>Job Tracker Extension</h1>
-        <button
-          onClick={() =>
-            (window.location.href = "http://localhost:3000/auth/google")
-          }
+        <Heading>Job Tracker Extension</Heading>
+        <Button
+          onClick={() => {
+            const authUrl = "https://localhost:5000/auth/google"; // Adjust this URL to your backend's Google OAuth endpoint
+            chrome.tabs.create({ url: authUrl });
+          }}
         >
           Login with Google
-        </button>
+        </Button>
       </div>
     );
   }
