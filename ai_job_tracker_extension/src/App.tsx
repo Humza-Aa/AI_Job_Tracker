@@ -21,7 +21,7 @@ function App() {
         <Heading>Job Tracker Extension</Heading>
         <Button
           onClick={() => {
-            const authUrl = "https://localhost:5000/auth/google"; // Adjust this URL to your backend's Google OAuth endpoint
+            const authUrl = "http://localhost:5000/auth/google"; 
             chrome.tabs.create({ url: authUrl });
           }}
         >
