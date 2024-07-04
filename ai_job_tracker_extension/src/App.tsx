@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
 import Popup from "./components/Popup";
-import { Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
+
+interface userInfo {
+  accessToken: string;
+  displayName: string;
+  email: string;
+  googleId: string;
+  profileImage: string;
+  refreshToken: string;
+  __v: number;
+  _id: string;
+}
+
+interface User {
+  user: userInfo;
+}
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     chrome.runtime.sendMessage({ type: "GET_USER_INFO" }, (response) => {
@@ -17,8 +32,8 @@ function App() {
 
   if (!user) {
     return (
-      <div>
-        <Heading>Job Tracker Extension</Heading>
+      <Box w="100%" p="10px">
+        <Heading textAlign="center" size="xl" color="white">Job Tracker Extension</Heading>
         <Button
           onClick={() => {
             const authUrl = "http://localhost:5000/auth/google"; 
@@ -27,11 +42,11 @@ function App() {
         >
           Login with Google
         </Button>
-      </div>
+      </Box>
     );
   }
-  console.log(user);
-  return <Popup />;
+  console.log(user, typeof user);
+  return <Popup user={user.user}/>;
 }
 
 export default App;
