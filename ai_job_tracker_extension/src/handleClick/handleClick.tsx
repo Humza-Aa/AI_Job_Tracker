@@ -14,8 +14,8 @@ export default async function handleClick() {
         null
       ).singleNodeValue as HTMLElement;
       if (htmlContent == null) {
-        console.log(htmlContent);
-        return <>hello</>;
+        console.log("Not On Job Page");
+        return;
       }
 
       const jobTitleElement = htmlContent.querySelector(
