@@ -37,40 +37,40 @@ interface User {
 export default function Popup(props: User) {
   const [information, setInformation] = useState(Data.info);
   const [loading, setLoading] = useState(false);
-  const [JobVisible, setJobVisible] = useState(false);
+  // const [JobVisible, setJobVisible] = useState(false);
 
-  useEffect(() => {
-    const checkHtmlContent = async () => {
-      let [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        func: (data) => {
-          const detail = data.queryHtml.htmlC;
-          const htmlContent = document.evaluate(
-            detail,
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-          ).singleNodeValue as HTMLElement;
-          const isVisible = htmlContent !== null;
-          chrome.runtime.sendMessage({ type: "jobVisibility", isVisible });
-        },
-        args: [{ queryHtml: { htmlC: Data.queryHtml.htmlC } }],
-      });
-    };
+  // useEffect(() => {
+  //   const checkHtmlContent = async () => {
+  //     let [tab] = await chrome.tabs.query({
+  //       active: true,
+  //       currentWindow: true,
+  //     });
+  //     chrome.scripting.executeScript({
+  //       target: { tabId: tab.id! },
+  //       func: (data) => {
+  //         const detail = data.queryHtml.htmlC;
+  //         const htmlContent = document.evaluate(
+  //           detail,
+  //           document,
+  //           null,
+  //           XPathResult.FIRST_ORDERED_NODE_TYPE,
+  //           null
+  //         ).singleNodeValue as HTMLElement;
+  //         const isVisible = htmlContent !== null;
+  //         chrome.runtime.sendMessage({ type: "jobVisibility", isVisible });
+  //       },
+  //       args: [{ queryHtml: { htmlC: Data.queryHtml.htmlC } }],
+  //     });
+  //   };
 
-    checkHtmlContent();
+  //   checkHtmlContent();
 
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === "jobVisibility") {
-        setJobVisible(message.isVisible);
-      }
-    });
-  }, []);
+  //   chrome.runtime.onMessage.addListener((message) => {
+  //     if (message.type === "jobVisibility") {
+  //       setJobVisible(message.isVisible);
+  //     }
+  //   });
+  // }, []);
 
   useEffect(() => {
     handleClick();
@@ -93,7 +93,7 @@ export default function Popup(props: User) {
     setInformation(updatedInformation);
   }
 
-  return JobVisible ? (
+  return (
     <>
       <Box
         // bg="blackAlpha.700"
@@ -162,7 +162,5 @@ export default function Popup(props: User) {
         </Flex>
       </Box>
     </>
-  ) : (
-    <>hl</>
   );
 }
