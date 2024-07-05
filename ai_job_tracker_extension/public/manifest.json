@@ -5,6 +5,7 @@
   "action": {
     "default_popup": "index.html"
   },
+  "scripts": ["background.js"],
   "permissions": ["scripting", "activeTab", "tabs"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
