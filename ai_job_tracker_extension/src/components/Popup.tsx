@@ -10,6 +10,8 @@ import {
   TabPanel,
   FormControl,
   FormLabel,
+  Text,
+  Avatar,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import renderFormControl from "./BasicInfo/renderFormControl";
@@ -17,7 +19,22 @@ import Data from "../Data/Data";
 import handleClick from "../handleClick/handleClick";
 import ApiSaveJob from "../API/api";
 
-export default function Popup() {
+interface UserInfo {
+  accessToken: string;
+  displayName: string;
+  email: string;
+  googleId: string;
+  profileImage: string;
+  refreshToken: string;
+  __v: number;
+  _id: string;
+}
+
+interface User {
+  user: UserInfo;
+}
+
+export default function Popup(props: User) {
   const [information, setInformation] = useState(Data.info);
   const [loading, setLoading] = useState(false);
   const [JobVisible, setJobVisible] = useState(false);
@@ -88,6 +105,8 @@ export default function Popup() {
       >
         <Flex justifyContent="center" flexDir="column" gap="10px">
           <Heading textAlign="center">Track My Application</Heading>
+          <Text>{props.user.displayName}</Text>
+          <Avatar size={"sm"} src={props.user.profileImage} />
           <Tabs variant="enclosed">
             <TabList>
               <Tab>Basic Information</Tab>

@@ -8,6 +8,15 @@
   "scripts": ["background.js"],
   "permissions": ["scripting", "activeTab", "tabs"],
   "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "assets/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["assets/content.js"]
+    }
+  ],
   "icons": {
     "32": "vite.svg"
   }
