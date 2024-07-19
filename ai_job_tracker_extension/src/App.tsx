@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Popup from "./components/Popup";
 import { Box, Button, Heading } from "@chakra-ui/react";
+import { ObjectId } from "mongodb";
 
 interface userInfo {
   accessToken: string;
@@ -10,7 +11,7 @@ interface userInfo {
   profileImage: string;
   refreshToken: string;
   __v: number;
-  _id: string;
+  _id: ObjectId;
 }
 
 interface User {

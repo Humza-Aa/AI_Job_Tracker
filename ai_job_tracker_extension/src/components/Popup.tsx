@@ -18,6 +18,7 @@ import renderFormControl from "./BasicInfo/renderFormControl";
 import Data from "../Data/Data";
 import handleClick from "../handleClick/handleClick";
 import ApiSaveJob from "../API/api";
+import { ObjectId } from "mongodb";
 
 interface UserInfo {
   accessToken: string;
@@ -27,7 +28,7 @@ interface UserInfo {
   profileImage: string;
   refreshToken: string;
   __v: number;
-  _id: string;
+  _id: ObjectId;
 }
 
 interface User {
@@ -154,7 +155,7 @@ export default function Popup(props: User) {
           <Button
             isLoading={loading}
             onClick={() => {
-              ApiSaveJob(information, setInformation, setLoading);
+              ApiSaveJob(information, setInformation, setLoading, props.user._id);
             }}
           >
             Track Job
