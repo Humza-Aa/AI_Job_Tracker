@@ -38,6 +38,7 @@ interface User {
 export default function Popup(props: User) {
   const [information, setInformation] = useState(Data.info);
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   // const [JobVisible, setJobVisible] = useState(false);
 
   // useEffect(() => {
@@ -72,6 +73,42 @@ export default function Popup(props: User) {
   //     }
   //   });
   // }, []);
+=======
+  const [JobVisible, setJobVisible] = useState(false);
+
+  useEffect(() => {
+    const checkHtmlContent = async () => {
+      let [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id! },
+        func: (data) => {
+          const detail = data.queryHtml.htmlC;
+          const htmlContent = document.evaluate(
+            detail,
+            document,
+            null,
+            XPathResult.FIRST_ORDERED_NODE_TYPE,
+            null
+          ).singleNodeValue as HTMLElement;
+          const isVisible = htmlContent !== null;
+          chrome.runtime.sendMessage({ type: "jobVisibility", isVisible });
+        },
+        args: [{ queryHtml: { htmlC: Data.queryHtml.htmlC } }],
+      });
+    };
+
+    checkHtmlContent();
+
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === "jobVisibility") {
+        setJobVisible(message.isVisible);
+      }
+    });
+  }, []);
+>>>>>>> origin/main
 
   useEffect(() => {
     handleClick();
@@ -94,7 +131,7 @@ export default function Popup(props: User) {
     setInformation(updatedInformation);
   }
 
-  return (
+  return JobVisible ? (
     <>
       <Box
         // bg="blackAlpha.700"
@@ -163,5 +200,7 @@ export default function Popup(props: User) {
         </Flex>
       </Box>
     </>
+  ) : (
+    <>hl</>
   );
 }

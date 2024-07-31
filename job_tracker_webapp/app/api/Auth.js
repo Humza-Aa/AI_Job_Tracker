@@ -5,7 +5,6 @@ export const isAuthenticated = async () => {
     const response = await axios.get("http://localhost:5000/auth/isauthenticated", {
       withCredentials: true,
     });
-    console.log("User data:", response.data.user);
     return response.data.user
   } catch (err) {
     console.error("Error fetching user:", err);
