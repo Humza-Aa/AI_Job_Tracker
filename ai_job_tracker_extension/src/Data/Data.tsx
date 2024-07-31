@@ -93,7 +93,6 @@ const Data = {
       "div.job-details-jobs-unified-top-card__company-name",
     locationE:
       "div.job-details-jobs-unified-top-card__primary-description-container div > span:nth-of-type(1)",
-      "div.job-details-jobs-unified-top-card__primary-description-container div > span:nth-of-type(1)",
     jobDescriptionE: "article.jobs-description__container",
   },
 };
