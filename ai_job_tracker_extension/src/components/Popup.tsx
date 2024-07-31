@@ -10,50 +10,68 @@ import {
   TabPanel,
   FormControl,
   FormLabel,
+  Text,
+  Avatar,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import renderFormControl from "./BasicInfo/renderFormControl";
 import Data from "../Data/Data";
 import handleClick from "../handleClick/handleClick";
 import ApiSaveJob from "../API/api";
+import { ObjectId } from "mongodb";
 
-export default function Popup() {
+interface UserInfo {
+  accessToken: string;
+  displayName: string;
+  email: string;
+  googleId: string;
+  profileImage: string;
+  refreshToken: string;
+  __v: number;
+  _id: ObjectId;
+}
+
+interface User {
+  user: UserInfo;
+}
+
+export default function Popup(props: User) {
   const [information, setInformation] = useState(Data.info);
   const [loading, setLoading] = useState(false);
-  const [JobVisible, setJobVisible] = useState(false);
+  // const [JobVisible, setJobVisible] = useState(false);
 
-  useEffect(() => {
-    const checkHtmlContent = async () => {
-      let [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        func: (data) => {
-          const detail = data.queryHtml.htmlC;
-          const htmlContent = document.evaluate(
-            detail,
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-          ).singleNodeValue as HTMLElement;
-          const isVisible = htmlContent !== null;
-          chrome.runtime.sendMessage({ type: "jobVisibility", isVisible });
-        },
-        args: [{ queryHtml: { htmlC: Data.queryHtml.htmlC } }],
-      });
-    };
+  // useEffect(() => {
+  //   const checkHtmlContent = async () => {
+  //     let [tab] = await chrome.tabs.query({
+  //       active: true,
+  //       currentWindow: true,
+  //     });
+  //     chrome.scripting.executeScript({
+  //       target: { tabId: tab.id! },
+  //       func: (data) => {
+  //         const detail = data.queryHtml.htmlC;
+  //         const htmlContent = document.evaluate(
+  //           detail,
+  //           document,
+  //           null,
+  //           XPathResult.FIRST_ORDERED_NODE_TYPE,
+  //           null
+  //         ).singleNodeValue as HTMLElement;
+  //         const isVisible = htmlContent !== null;
+  //         chrome.runtime.sendMessage({ type: "jobVisibility", isVisible });
+  //       },
+  //       args: [{ queryHtml: { htmlC: Data.queryHtml.htmlC } }],
+  //     });
+  //   };
 
-    checkHtmlContent();
+  //   checkHtmlContent();
 
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === "jobVisibility") {
-        setJobVisible(message.isVisible);
-      }
-    });
-  }, []);
+  //   chrome.runtime.onMessage.addListener((message) => {
+  //     if (message.type === "jobVisibility") {
+  //       setJobVisible(message.isVisible);
+  //     }
+  //   });
+  // }, []);
 
   useEffect(() => {
     handleClick();
@@ -76,7 +94,7 @@ export default function Popup() {
     setInformation(updatedInformation);
   }
 
-  return JobVisible ? (
+  return (
     <>
       <Box
         // bg="blackAlpha.700"
@@ -88,6 +106,8 @@ export default function Popup() {
       >
         <Flex justifyContent="center" flexDir="column" gap="10px">
           <Heading textAlign="center">Track My Application</Heading>
+          <Text>{props.user.displayName}</Text>
+          <Avatar size={"sm"} src={props.user.profileImage} />
           <Tabs variant="enclosed">
             <TabList>
               <Tab>Basic Information</Tab>
@@ -135,7 +155,12 @@ export default function Popup() {
           <Button
             isLoading={loading}
             onClick={() => {
-              ApiSaveJob(information, setInformation, setLoading);
+              ApiSaveJob(
+                information,
+                setInformation,
+                setLoading,
+                props.user._id
+              );
             }}
           >
             Track Job
@@ -143,7 +168,5 @@ export default function Popup() {
         </Flex>
       </Box>
     </>
-  ) : (
-    <>hl</>
   );
 }

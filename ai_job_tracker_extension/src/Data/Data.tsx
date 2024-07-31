@@ -89,7 +89,8 @@ const Data = {
       "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]",
     jobTitleE:
       "h1.job-details-jobs-unified-top-card__job-title, div.job-details-jobs-unified-top-card__job-title",
-    companyE: "div.job-details-jobs-unified-top-card__company-name",
+    companyE:
+      "div.job-details-jobs-unified-top-card__company-name",
     locationE:
       "div.job-details-jobs-unified-top-card__primary-description-container div > span:nth-of-type(1)",
     jobDescriptionE: "article.jobs-description__container",

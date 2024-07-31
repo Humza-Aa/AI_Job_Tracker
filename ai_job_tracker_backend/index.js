@@ -7,6 +7,8 @@ require("dotenv").config();
 const jobRoutes = require("./routes/jobRoutes");
 const googleRoutes = require("./routes/googleAuthRoute");
 const emailRoutes = require("./routes/emailRoutes");
+const classifyRoutes = require("./routes/classifierRoutes");
+
 const setupMiddleware = require("./middlewares/middleware");
 
 require("./config/passport");
@@ -28,6 +30,7 @@ mongoose
 app.use("/auth", googleRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/emails", emailRoutes);
+app.use("/api/classify", classifyRoutes);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

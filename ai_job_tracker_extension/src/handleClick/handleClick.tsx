@@ -13,7 +13,6 @@ export default async function handleClick() {
         XPathResult.FIRST_ORDERED_NODE_TYPE,
         null
       ).singleNodeValue as HTMLElement;
-
       if (htmlContent == null) {
         console.log("Not On Job Page");
         return;

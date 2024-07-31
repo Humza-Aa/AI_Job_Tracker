@@ -21,8 +21,8 @@ exports.jobApply = async (req, res) => {
 
   const deleteDeadline = new Date(torontoTime);
   deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
+  console.log(req.user);
   const userId = req.user._id;
-  // console.log(req);
   const newApplication = new Application({
     user: userId,
     positionTitle,
@@ -74,7 +74,7 @@ exports.updateJob = async (req, res) => {
     console.log("Updated Successfully");
     res
       .status(200)
-      .json({ message: "Updated Successfully", updatedApplication });
+      .json({ message: "Updated Successfully"});
   } catch (error) {
     console.log("Update Error: ", error);
     res.status(500).json({ message: "Internal server error" });

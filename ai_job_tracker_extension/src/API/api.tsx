@@ -1,4 +1,6 @@
 import Data from "../Data/Data";
+import { ObjectId } from 'mongodb';
+
 
 interface InfoItem {
   name: string;
@@ -11,10 +13,14 @@ interface InfoItem {
   default?: number;
 }
 
+
+
+
 export default async function ApiSaveJob(
   info: InfoItem[],
   setInformation: Function,
-  setLoading: Function
+  setLoading: Function,
+  user: ObjectId
 ) {
   setLoading(true);
   interface TransformedObject {
@@ -39,10 +45,11 @@ export default async function ApiSaveJob(
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(transformedObject), // Replace { key: 'value' } with your object
+    body: JSON.stringify(transformedObject), 
+    user
   };
 
-  fetch("http://localhost:3000/", requestOptions)
+  fetch("http://localhost:5000/api/jobs/apply", requestOptions)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -61,5 +68,5 @@ export default async function ApiSaveJob(
   setInformation(Data.info);
   setTimeout(function () {
     setLoading(false);
-  }, 1500); // 2000 milliseconds = 2 seconds
+  }, 1500); 
 }

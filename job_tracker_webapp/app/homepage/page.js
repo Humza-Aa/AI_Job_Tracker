@@ -6,8 +6,8 @@ import Emails from "../api/getEmails";
 import Login from "../components/login/login";
 
 export default function HomePage() {
-  const { isAuthenticated, loading } = useUser();
-
+  const { user, isAuthenticated, loading } = useUser();
+  console.log(user);
   if (loading) {
     return (
       <Flex justifyContent="center" alignItems="center" height="100vh">
@@ -20,7 +20,7 @@ export default function HomePage() {
     <>
       {isAuthenticated ? (
         <>
-          <JobsTable /> <Emails />
+          <JobsTable />
         </>
       ) : (
         <>
