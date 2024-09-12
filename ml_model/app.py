@@ -26,7 +26,7 @@ def classify_email(text):
         outputs = model(**inputs)
         logits = outputs.logits
         predicted_class = torch.argmax(logits, dim=1).item()
-
+    print(predicted_class)
     return labels[predicted_class]
 
 @app.route('/classify', methods=['POST'])
