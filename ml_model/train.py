@@ -5,7 +5,7 @@ from transformers import BertTokenizer, BertForSequenceClassification, AdamW, ge
 from tqdm.auto import tqdm
 
 # Sample dataset
-data = {
+data = { 
     'text': [
         "Thank you for applying.",
         "We would like to invite you for an interview.",
