@@ -4,37 +4,31 @@ from torch.utils.data import DataLoader, TensorDataset, random_split
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW, get_scheduler
 from tqdm.auto import tqdm
 
-# Sample dataset
-data = { 
-    'text': [
-        "Thank you for applying.",
-        "We would like to invite you for an interview.",
-        "Congratulations, you have an offer!",
-        "We are screening applications.",
-        "We regret to inform you that you have been rejected."
-    ],
-    'label': [0, 2, 3, 1, 4]
-}
-df = pd.DataFrame(data)
+csv_df = pd.read_csv("./Email_Dataset/balanced_dataSet.csv")
+
+emails = csv_df["Email"].tolist()
+labels = csv_df["Label"].tolist()
 
 # Load tokenizer and model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=5)
+model = BertForSequenceClassification.from_pretrained(
+    'bert-base-uncased', num_labels=7)
 
 # Tokenization function
 def tokenize_function(text):
     return tokenizer(text, padding='max_length', truncation=True, return_tensors="pt")
 
+
 # Tokenize texts
-tokenized_texts = df['text'].apply(tokenize_function)
+tokenized_emails = [tokenize_function(email) for email in emails]
 
 # Prepare input tensors
-input_ids = torch.cat([x['input_ids'] for x in tokenized_texts])
-attention_masks = torch.cat([x['attention_mask'] for x in tokenized_texts])
-labels = torch.tensor(df['label'].values)
+input_ids = torch.cat([x['input_ids'] for x in tokenized_emails])
+attention_masks = torch.cat([x['attention_mask'] for x in tokenized_emails])
+labels_tensor = torch.tensor(labels)
 
 # Create dataset and dataloaders
-dataset = TensorDataset(input_ids, attention_masks, labels)
+dataset = TensorDataset(input_ids, attention_masks, labels_tensor)
 train_size = int(0.8 * len(dataset))
 val_size = len(dataset) - train_size
 train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
@@ -47,9 +41,9 @@ optimizer = AdamW(model.parameters(), lr=5e-5)
 num_epochs = 3
 num_training_steps = num_epochs * len(train_dataloader)
 lr_scheduler = get_scheduler(
-    "linear", 
-    optimizer=optimizer, 
-    num_warmup_steps=0, 
+    "linear",
+    optimizer=optimizer,
+    num_warmup_steps=0,
     num_training_steps=num_training_steps
 )
 
@@ -66,7 +60,8 @@ for epoch in range(num_epochs):
         attention_masks = batch[1].to(device)
         labels = batch[2].to(device)
 
-        outputs = model(input_ids, attention_mask=attention_masks, labels=labels)
+        outputs = model(
+            input_ids, attention_mask=attention_masks, labels=labels)
         loss = outputs.loss
         loss.backward()
 
@@ -88,7 +83,8 @@ for batch in val_dataloader:
     labels = batch[2].to(device)
 
     with torch.no_grad():
-        outputs = model(input_ids, attention_mask=attention_masks, labels=labels)
+        outputs = model(
+            input_ids, attention_mask=attention_masks, labels=labels)
     logits = outputs.logits
     predictions = torch.argmax(logits, dim=-1)
     accuracy += (predictions == labels).sum().item()

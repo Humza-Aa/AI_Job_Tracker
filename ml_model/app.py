@@ -16,7 +16,13 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 model.eval()
 
-labels = ["applied", "screening", "interview", "offer", "rejected"]
+# Applied: You have send an application to a job posting
+# Screening: When the HR is looking through your application or you have a task to complete
+# Interview: Company has invited you to an interview
+# Offer: Company has given you a job offer
+# Rejected: Company no longer is looking at your application or you don't fit the criteria
+
+labels = ["applied", "screening", "interview", "offer", "rejected", "ads", "other"]
 
 def classify_email(text):
     inputs = tokenizer(text, return_tensors='pt', padding='max_length', truncation=True, max_length=128)
