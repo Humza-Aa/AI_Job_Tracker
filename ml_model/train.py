@@ -4,9 +4,27 @@ from torch.utils.data import DataLoader, TensorDataset, random_split
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW, get_scheduler
 from tqdm.auto import tqdm
 
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
+
+def clean_text(email):
+    email = email.lower()
+
+    email = re.sub(r'\W', ' ', email)
+
+    email = ' '.join([word for word in email.split() if word not in stop_words])
+
+    return email
+
 csv_df = pd.read_csv("./Email_Dataset/balanced_dataSet.csv")
 
-emails = csv_df["Email"].tolist()
+csv_df['Clean_Email'] = csv_df['Email'].apply(clean_text)
+
+emails = csv_df["Clean_Email"].tolist()
 labels = csv_df["Label"].tolist()
 
 # Load tokenizer and model
