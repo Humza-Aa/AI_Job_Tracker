@@ -11,7 +11,6 @@ exports.jobApply = async (req, res) => {
     jobDescription,
     additionalInformation,
   } = req.body;
-
   const currentDate = new Date();
 
   const torontoOffset = -4 * 60;
@@ -21,7 +20,6 @@ exports.jobApply = async (req, res) => {
 
   const deleteDeadline = new Date(torontoTime);
   deleteDeadline.setMonth(deleteDeadline.getMonth() + 1);
-  console.log(req.user);
   const userId = req.user._id;
   const newApplication = new Application({
     user: userId,
@@ -72,9 +70,7 @@ exports.updateJob = async (req, res) => {
       $set: { [field]: updatedValue },
     });
     console.log("Updated Successfully");
-    res
-      .status(200)
-      .json({ message: "Updated Successfully"});
+    res.status(200).json({ message: "Updated Successfully" });
   } catch (error) {
     console.log("Update Error: ", error);
     res.status(500).json({ message: "Internal server error" });

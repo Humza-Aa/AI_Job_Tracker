@@ -6,18 +6,30 @@ import {
   Select,
 } from "@chakra-ui/react";
 
+interface field {
+  name: string;
+  apiName: string;
+  id: string;
+  value: string;
+  type: string;
+  tab: string;
+  Require: boolean;
+  options?: Array<string>;
+  default?: number;
+}
+
 export default function renderFormControl(
-  field: any,
-  handleEditableChange: Function
+  field: field,
+  handleEditableChange: (id: string, newValue: string) => void
 ) {
-  if (field.type === "select") {
+  if (field.type === "select" && field.options && field.default == 0) {
     return (
       <Select
         value={field.value}
         onChange={(e) => handleEditableChange(field.id, e.target.value)}
         defaultValue={field.options[field.default]}
       >
-        {field.options.map((option: any) => (
+        {field.options.map((option: string) => (
           <option key={option} value={option}>
             {option}
           </option>

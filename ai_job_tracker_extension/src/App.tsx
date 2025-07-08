@@ -24,6 +24,7 @@ function App() {
     chrome.runtime.sendMessage({ type: "GET_USER_INFO" }, (response) => {
       if (response.error) {
         setUser(null);
+        console.log("user not found");
       } else {
         setUser(response.user);
       }
@@ -33,10 +34,12 @@ function App() {
   if (!user) {
     return (
       <Box w="100%" p="10px">
-        <Heading textAlign="center" size="xl" color="white">Job Tracker Extension</Heading>
+        <Heading textAlign="center" size="xl" color="white">
+          Job Tracker Extension
+        </Heading>
         <Button
           onClick={() => {
-            const authUrl = "http://localhost:5000/auth/google"; 
+            const authUrl = "http://localhost:5000/auth/google";
             chrome.tabs.create({ url: authUrl });
           }}
         >
@@ -46,7 +49,7 @@ function App() {
     );
   }
   console.log(user, typeof user);
-  return <Popup user={user.user}/>;
+  return <Popup user={user.user} />;
 }
 
 export default App;

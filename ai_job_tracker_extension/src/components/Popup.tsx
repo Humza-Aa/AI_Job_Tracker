@@ -41,7 +41,7 @@ export default function Popup(props: User) {
 
   useEffect(() => {
     const checkHtmlContent = async () => {
-      let [tab] = await chrome.tabs.query({
+      const [tab] = await chrome.tabs.query({
         active: true,
         currentWindow: true,
       });

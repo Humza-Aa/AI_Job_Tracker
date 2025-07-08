@@ -86,7 +86,7 @@ const Data = {
   ],
   queryHtml: {
     htmlC:
-      "//body/div[5]/div[3]/div[4]/div[1]/div[1]/main[1]/div[1]/div[2]/div[2]/div[1]",
+      "//main[@id='main']",
     jobTitleE:
       "h1.job-details-jobs-unified-top-card__job-title, div.job-details-jobs-unified-top-card__job-title",
     companyE:

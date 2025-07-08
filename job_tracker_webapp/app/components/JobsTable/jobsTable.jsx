@@ -107,7 +107,7 @@ export default function JobsTable() {
                           onChange(e, job._id, "positionTitle");
                         }}
                       >
-                        <EditablePreview w="100%" />
+                        <EditablePreview />
                         <EditableInput w="100%" />
                       </Editable>
                     </Td>
@@ -125,13 +125,24 @@ export default function JobsTable() {
                     </Td>
                     <Td>
                       <Editable
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
                         defaultValue={job.location}
                         onChange={(e) => {
                           onChange(e, job._id, "location");
                         }}
                       >
-                        <EditablePreview w="100%" />
-                        <EditableInput w="100%" />
+                        <EditablePreview
+                          overflow="hidden"
+                          whiteSpace="nowrap"
+                          textOverflow="ellipsis"
+                        />
+                        <EditableInput
+                          overflow="hidden"
+                          whiteSpace="nowrap"
+                          textOverflow="ellipsis"
+                        />
                       </Editable>
                     </Td>
                     <Td>

@@ -39,27 +39,26 @@ export default async function ApiSaveJob(
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(transformedObject), // Replace { key: 'value' } with your object
+    body: JSON.stringify(transformedObject),
   };
-
-  fetch("http://localhost:3000/", requestOptions)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response;
-    })
-    .then((data) => {
-      // Handle the data received from the API
-
+  
+  fetch("http://localhost:5000/api/jobs/apply", requestOptions)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response;
+  })
+  .then((data) => {
+    // Handle the data received from the API
+    console.log(requestOptions);
       console.log(data);
     })
     .catch((error) => {
-      // Handle errors
       console.error("There was a problem with the fetch operation:", error);
     });
   setInformation(Data.info);
   setTimeout(function () {
     setLoading(false);
-  }, 1500); // 2000 milliseconds = 2 seconds
+  }, 1500);
 }

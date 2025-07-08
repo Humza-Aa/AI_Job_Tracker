@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
       .then((response) => {
         if (response.status === 401) {
           sendResponse({ authenticated: false });
-          return null; 
+          return null;
         } else {
           return response.json();
         }
@@ -20,7 +20,10 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
           sendResponse({ user: data });
         }
       })
-      .catch((error) => sendResponse({ error: error.message }));
+      .catch((error) => {
+        console.log("helso");
+        sendResponse({ error: error.message });
+      });
     return true; // Keep the message channel open for sendResponse
   }
 });
