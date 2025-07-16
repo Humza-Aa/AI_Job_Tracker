@@ -15,6 +15,7 @@ import {
   Heading,
   Select,
   Center,
+  Box
 } from "@chakra-ui/react";
 
 import axios from "axios";
@@ -124,26 +125,28 @@ export default function JobsTable() {
                       </Editable>
                     </Td>
                     <Td>
-                      <Editable
-                        overflow="hidden"
-                        whiteSpace="nowrap"
-                        textOverflow="ellipsis"
-                        defaultValue={job.location}
-                        onChange={(e) => {
-                          onChange(e, job._id, "location");
-                        }}
-                      >
-                        <EditablePreview
+                      <Box maxW="200px" overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis">
+                        <Editable
                           overflow="hidden"
                           whiteSpace="nowrap"
                           textOverflow="ellipsis"
-                        />
-                        <EditableInput
-                          overflow="hidden"
-                          whiteSpace="nowrap"
-                          textOverflow="ellipsis"
-                        />
-                      </Editable>
+                          defaultValue={job.location}
+                          onChange={(e) => {
+                            onChange(e, job._id, "location");
+                          }}
+                        >
+                          <EditablePreview
+                            overflow="hidden"
+                            whiteSpace="nowrap"
+                            textOverflow="ellipsis"
+                          />
+                          <EditableInput
+                            overflow="hidden"
+                            whiteSpace="nowrap"
+                            textOverflow="ellipsis"
+                          />
+                        </Editable>
+                      </Box>
                     </Td>
                     <Td>
                       <Select

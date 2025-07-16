@@ -64,7 +64,15 @@ export default function renderFormControl(
         value={field.value}
         onChange={(value) => handleEditableChange(field.id, value)}
       >
-        <EditablePreview w="100%" h="30px" border="1px solid grey" px="5px" />
+        <EditablePreview
+          w="100%"
+          h="30px"
+          border="1px solid grey"
+          px="5px"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+        />
         <EditableInput p="5px" />
       </Editable>
     );

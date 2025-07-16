@@ -10,7 +10,6 @@ import {
   TabPanel,
   FormControl,
   FormLabel,
-  Text,
   Avatar,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -104,11 +103,20 @@ export default function Popup(props: User) {
         height="100%"
       >
         <Flex justifyContent="center" flexDir="column" gap="10px">
-          <Heading textAlign="center">Track My Application</Heading>
-          <Text>{props.user.displayName}</Text>
-          <Avatar size={"sm"} src={props.user.profileImage} />
-          <Tabs variant="enclosed">
-            <TabList>
+          <Box
+            display="flex"
+            flexDir="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Heading>JTA</Heading>
+            <Box>
+              <Avatar size={"sm"} src={props.user.profileImage} />
+              {/* <Text>{props.user.displayName}</Text> */}
+            </Box>
+          </Box>
+          <Tabs variant="plain">
+            <TabList rounded="l3" p="1">
               <Tab>Basic Information</Tab>
               <Tab>Job Details</Tab>
             </TabList>
